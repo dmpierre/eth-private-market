@@ -1,0 +1,1 @@
+These are circuits from `maci-circuits` library. To avoid the `Duplicated symbol` compilation error, we had to copy those here and adapt them accordingly.

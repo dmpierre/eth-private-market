@@ -1,0 +1,9 @@
+**/types
+**/sol
+**/circom
+**/aws
+**/out
+*.md
+front/.next
+packages/contracts
+tsconfig.json

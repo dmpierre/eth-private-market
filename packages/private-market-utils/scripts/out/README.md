@@ -1,0 +1,1 @@
+Proofs and public signals are generated here. Named as `ask-{askId}-order-{orderId}-{proof/publicSignals/inputs}.json`.

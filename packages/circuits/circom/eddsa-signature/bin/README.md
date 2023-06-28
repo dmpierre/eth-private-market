@@ -1,0 +1,1 @@
+Holds compilation artifacts of `mainSellSigEdDSA.circom`.

@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.polka {
+    background-image: radial-gradient(rgb(199, 199, 199) 4%, transparent 1%);
+    background-position: 16px 16px;
+    background-size: 32px 32px;
+    background-color: rgb(255, 255, 255);
+}

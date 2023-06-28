@@ -1,0 +1,12 @@
+{
+    "singleQuote": true,
+    "endOfLine": "lf",
+    "printWidth": 80,
+    "tabWidth": 4,
+    "overrides": [
+        {
+            "files": [],
+            "options": {}
+        }
+    ]
+}

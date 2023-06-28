@@ -1,0 +1,97 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# scripts artifacts
+**/scripts/out/*
+
+# circom
+*.r1cs
+test_circom_out
+*.ptau
+*.zkey
+verification_key_*
+
+# aws
+aws
+
+# ignore contracts folder
+# temporary
+front/src/
+packages/circuits/scripts/out/*
+
+# include circuit verification key
+!packages/circuits/circom/ask/eddsa/vkeys/verification_key_mainSellSigEdDSA.json
+
+# include circuit wasm
+packages/circuits/circom/eth-address/ecdh-check/bin/sellETHAddressECDH_js/*
+!packages/circuits/circom/eth-address/ecdh-check/bin/sellETHAddressECDH_js/*.wasm
+
+packages/circuits/circom/eth-address/no-ecdh-check/bin/sellETHAddressNoECDH_js/*
+!packages/circuits/circom/eth-address/no-ecdh-check/bin/sellETHAddressNoECDH_js/*.wasm
+
+packages/circuits/circom/eddsa-signature/bin/mainSellSigPublicMessageEdDSA/mainSellSigPublicMessageEdDSA_js/*
+!packages/circuits/circom/eddsa-signature/bin/mainSellSigPublicMessageEdDSA/mainSellSigPublicMessageEdDSA_js/*.wasm
+
+packages/circuits/circom/sig-merkle/bin/sigMerkle_js/*
+!packages/circuits/circom/sig-merkle/bin/sigMerkle_js/*.wasm
+
+packages/circuits/circom/proof-sig-merkle/bin
+
+__pycache__
+
+data/
+dist
+rsync.sh
+
+# ignore contracts out folder
+packages/contracts/cache/
+packages/contracts/out/
+
+verifyAndEncryptSigMerkleProof_cpp
+
+# 
+front/public/*.wasm
+
+.env
+broadcast
+
+proof-data-sig-merkle-groth16/
+proofInput.json
+proof-artifacts
+!packages/private-market-utils/scripts/out/README.md
+
+packages/contracts/lib/

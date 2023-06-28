@@ -1,0 +1,44 @@
+{
+    "name": "private-market",
+    "version": "1.0.0",
+    "license": "MIT",
+    "private": true,
+    "workspaces": {
+        "packages": [
+            "packages/*",
+            "app/",
+            "server/"
+        ],
+        "nohoist": [
+            "**/@types",
+            "**/@types/**",
+            "**/circom-ecdsa",
+            "**/circom-ecdsa/**",
+            "**/circomlib",
+            "**/circomlib/**",
+            "**/keccak256-circom",
+            "**/keccak256-circom/**",
+            "**/heyanon-circuits",
+            "**/heyanon-circuits/**",
+            "**/efficient-zk-ecdsa",
+            "**/efficient-zk-ecdsa/**",
+            "**/circom-pairing",
+            "**/circom-pairing/**",
+            "**/circom-pairing"
+        ]
+    },
+    "resolutions": {
+        "**/circom-ecdsa/circomlib": "2.0.2",
+        "**/circom-ecdsa/**/circomlib": "2.0.2"
+    },
+    "devDependencies": {
+        "husky": "^8.0.0",
+        "husky-init": "^8.0.0",
+        "prettier": "^2.8.8"
+    },
+    "scripts": {
+        "prepare": "husky install",
+        "format": "prettier . --write",
+        "contracts:clean-git": "rm -rf packages/contracts/lib/forge-std/.git"
+    }
+}

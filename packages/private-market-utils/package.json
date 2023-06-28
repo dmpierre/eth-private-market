@@ -1,0 +1,34 @@
+{
+    "name": "private-market-utils",
+    "version": "0.0.4",
+    "license": "MIT",
+    "main": "dist/lib/index.js",
+    "types": "dist/lib/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "script:get-sig-merkle-proof": "yarn ts-node scripts/proveSigMerkle.ts data/askSigMerkleGroth16Proof-user-123456.json data/orderId-i-askId-j.json ../../circuits/scripts/data/priv.txt ../../circuits/scripts/merkle/addresses.json",
+        "script:get-groth16-inputs": "yarn ts-node scripts/buildInputGroth16Proof.ts scripts/out/ask-i-order-j-proof.json scripts/out/ask-i-order-j-publicSignals.json ../circuits/circom/sig-merkle/vkey/verification_key_sigMerkle.json data/askSigMerkleGroth16Proof-user-1234567.json data/orderId-i-askId-j.json out/proofInputGroth-orderId-i-askId-j.json"
+    },
+    "dependencies": {
+        "@noble/secp256k1": "1.7.1",
+        "circomlibjs": "^0.1.7",
+        "global": "^4.4.0",
+        "maci-crypto": "^1.1.2",
+        "maci-domainobjs": "^1.1.2",
+        "poseidon-encryption": "^1.0.2",
+        "typescript": "^5.0.4"
+    },
+    "devDependencies": {
+        "@types/mocha": "^10.0.1",
+        "@types/node": "^20.1.0",
+        "dts-gen": "^0.6.1",
+        "mocha": "^10.2.0",
+        "python-shell": "^5.0.0",
+        "snarkjs": "^0.7.0",
+        "ts-mocha": "^10.0.0",
+        "ts-node": "^10.9.1"
+    }
+}
