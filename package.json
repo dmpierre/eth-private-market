@@ -6,8 +6,7 @@
     "workspaces": {
         "packages": [
             "packages/*",
-            "app/",
-            "server/"
+            "front/"
         ],
         "nohoist": [
             "**/@types",

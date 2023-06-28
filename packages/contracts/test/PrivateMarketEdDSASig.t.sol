@@ -69,6 +69,8 @@ contract PrivateMarketEdDSASigTest is Test, Shared {
     ];
 
     function setUp() public {
+        vm.deal(seller, 1 ether);
+        vm.deal(buyer, 1 ether);
         market = new PrivateMarket(cancelBlockTime);
     }
 
