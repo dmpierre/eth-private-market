@@ -93,5 +93,3 @@ proof-data-sig-merkle-groth16/
 proofInput.json
 proof-artifacts
 !packages/private-market-utils/scripts/out/README.md
-
-packages/contracts/lib/
