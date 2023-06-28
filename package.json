@@ -38,6 +38,9 @@
     "scripts": {
         "prepare": "husky install",
         "format": "prettier . --write",
+        "build:utils": "cd packages/private-market-utils/ && yarn build",
+        "test:contracts": "cd packages/contracts/ && forge test",
+        "postinstall": "yarn build:utils && yarn test:contracts",
         "contracts:clean-git": "rm -rf packages/contracts/lib/forge-std/.git"
     }
 }
