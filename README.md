@@ -1,7 +1,7 @@
 # Private market
 
 <p align="center">
-  <img src="https://github.com/dmpierre/eth-private-market/assets/23149200/e11511ce-25db-4d09-a0a7-102c1c514eb9" width="30%" height="30%" />
+  <img src="https://github.com/dmpierre/eth-private-market/assets/23149200/bfec54b5-d150-4b10-bdf4-9b43fd425721" width="30%" height="30%" />
 </p>
 
 This is a repo demonstrating how to leverage zk-snarks and ethereum for trustlessly selling:
