@@ -4,13 +4,15 @@ import { PageTop } from '../page-components';
 interface MarketNavBarProps {
     active: 'bids' | 'asks' | 'list' | 'activity' | 'decrypt';
 }
-export const MarketNavBar: React.FC<MarketNavBarProps> = ({active}) => {
+export const MarketNavBar: React.FC<MarketNavBarProps> = ({ active }) => {
     const bidsUnderline = active == 'bids' ? 'underline' : 'hover:underline';
     const asksUnderline = active == 'asks' ? 'underline' : 'hover:underline';
     const listUnderline = active == 'list' ? 'underline' : 'hover:underline';
-    const activityUnderline = active == 'activity' ? 'underline' : 'hover:underline';
-    const decryptUnderline = active == 'decrypt' ? 'underline' : 'hover:underline';
-    
+    const activityUnderline =
+        active == 'activity' ? 'underline' : 'hover:underline';
+    const decryptUnderline =
+        active == 'decrypt' ? 'underline' : 'hover:underline';
+
     return (
         <div className="flex font-mono md:text-lg justify-center py-5 space-x-4 md:space-x-16">
             <div>

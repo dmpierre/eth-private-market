@@ -113,7 +113,7 @@ export default function MyActivity() {
     return (
         <TopContainer>
             <MarketPageTop></MarketPageTop>
-            <MarketNavBar active='activity'/>
+            <MarketNavBar active="activity" />
             {isMounted ? (
                 isConnected ? (
                     inspectingBid ? (

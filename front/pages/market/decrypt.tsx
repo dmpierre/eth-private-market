@@ -228,7 +228,7 @@ export default function Decrypt() {
     return (
         <TopContainer>
             <MarketPageTop></MarketPageTop>
-            <MarketNavBar active='decrypt' />
+            <MarketNavBar active="decrypt" />
             <DecryptOrder />
         </TopContainer>
     );

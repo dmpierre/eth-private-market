@@ -50,7 +50,7 @@ export default function Asks() {
         <>
             <TopContainer>
                 <MarketPageTop></MarketPageTop>
-                <MarketNavBar active='asks' />
+                <MarketNavBar active="asks" />
                 {inspectingListing ? (
                     <AskCard
                         inspectingAsk={inspectingListing}

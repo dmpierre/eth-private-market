@@ -251,7 +251,7 @@ export default function List() {
     return (
         <TopContainer>
             <MarketPageTop></MarketPageTop>
-            <MarketNavBar active='list'/>
+            <MarketNavBar active="list" />
             <div
                 style={{ margin: '0 auto' }}
                 className="lg:w-1/4 sm:w-1/2 p-5 border-4 rounded-md space-y-5"
