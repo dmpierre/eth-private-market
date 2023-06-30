@@ -13,7 +13,7 @@ import { hashPersonalMessage } from 'ethereumjs-util';
 import {
     bigint_to_array,
     Uint8Array_to_bigint,
-} from 'private-market-utils/dist/lib/src/bigint';
+} from 'private-market-utils/lib/browser';
 import { hash2 } from 'maci-crypto';
 import { useAskIDOrders } from '@/hooks/useOrders';
 import { ListingsTable } from './listings-table';
@@ -21,7 +21,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import { getOrderRow } from '@/utils/listings';
 import { useListingEvent } from '@/hooks/useListings';
 import { OrderCard } from './order-card';
-import { User } from 'private-market-utils/dist/lib/src/market';
+import { User } from 'private-market-utils/lib/browser';
 import { EcdhSharedKey } from 'maci-crypto';
 import { exportMarketKey } from '@/utils/misc';
 

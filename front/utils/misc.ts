@@ -4,7 +4,7 @@ import {
     MarketObjectType,
     Order,
 } from '@/types/types';
-import { User } from 'private-market-utils/dist/lib/src/market';
+import { User } from 'private-market-utils/lib/browser';
 import { EcdhSharedKey } from 'maci-crypto';
 
 export const exportMarketKey = (

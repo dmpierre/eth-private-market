@@ -1,5 +1,5 @@
-import { EncryptedOrderData, Groth16Proof } from '@/types/types';
-import { ECDSAKeyPair } from 'private-market-utils/dist/lib/src/market';
+import { EncryptedOrderData } from '@/types/types';
+import { ECDSAKeyPair } from 'private-market-utils/lib/browser';
 import { SetStateAction, useState } from 'react';
 import { MarketObjectType } from '@/types/types';
 import { getObjectTypeFromActionType } from '../utils/misc';

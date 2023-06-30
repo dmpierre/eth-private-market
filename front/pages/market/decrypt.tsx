@@ -9,9 +9,8 @@ import {
     EncryptedOrderData,
     Groth16Proof,
     MarketObjectType,
-    Order,
 } from '@/types/types';
-import { tuple_to_bigint } from 'private-market-utils/dist/lib/src/bigint';
+import { tuple_to_bigint } from 'private-market-utils/lib/browser';
 import { decrypt as poseidonDecrypt, EcdhSharedKey } from 'maci-crypto';
 import { BN128_MOD } from '@/app.conf';
 

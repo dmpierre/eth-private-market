@@ -88,7 +88,7 @@ export const main = async () => {
         ...treeArtifacts,
     };
     console.log('Starting proof generation...');
-    
+
     const { proof, publicSignals } = await snarkjs.groth16.fullProve(
         inputs,
         pathWasm,

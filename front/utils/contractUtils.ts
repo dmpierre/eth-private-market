@@ -1,8 +1,8 @@
-import { getRandomECDSAPrivKey } from '@/../packages/private-market-utils/dist/lib/src/crypto';
+import { getRandomECDSAPrivKey } from 'private-market-utils/lib/browser';
 import {
     User,
     ECDSAKeyPair,
-} from '@/../packages/private-market-utils/dist/lib/src/market';
+} from 'private-market-utils/lib/browser';
 import { Ask, Bid, Order } from '@/types/types';
 import { Keypair, PubKey, PrivKey } from 'maci-domainobjs';
 import { hash2, sign } from 'maci-crypto';

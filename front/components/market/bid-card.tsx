@@ -16,7 +16,7 @@ import {
 import { BidInspect } from './bid-inspect';
 import { prepareInputsSellETHAddressECDH } from '@/utils/contractUtils';
 import { ConnectWallet } from '../wallet';
-import { ECDSAKeyPair } from 'private-market-utils/dist/lib/src/market';
+import { ECDSAKeyPair } from 'private-market-utils/lib/browser';
 
 export const BidCard: React.FC<BidCardProps> = ({
     inspectingBid,
