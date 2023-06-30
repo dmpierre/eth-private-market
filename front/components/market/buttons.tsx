@@ -156,14 +156,14 @@ export const DownloadOrderButton: React.FC<DownloadOrderButtonProps> = ({
     const data =
         order.orderType == 0n
             ? {
-                messageHash:
-                    order.orderedGroth16SigMerkleProof.messageHash.map((x) =>
-                        x.toString()
-                    ),
-            }
+                  messageHash:
+                      order.orderedGroth16SigMerkleProof.messageHash.map((x) =>
+                          x.toString()
+                      ),
+              }
             : order.orderType == 1n
-                ? order.orderedSignature.message
-                : ask.ethAddress.keccakAddress;
+            ? order.orderedSignature.message
+            : ask.ethAddress.keccakAddress;
     return (
         <a
             href={`data:text/json;charset=utf-8,${encodeURIComponent(
@@ -182,8 +182,8 @@ export const DownloadOrderButton: React.FC<DownloadOrderButtonProps> = ({
                         order.orderType == 0n
                             ? 'proof'
                             : order.orderType == 1n
-                                ? 'signature'
-                                : 'address',
+                            ? 'signature'
+                            : 'address',
                     ...encryptedData,
                 })
             )}`}
@@ -207,12 +207,12 @@ export const DownloadAskButton: React.FC<DownloadAskButtonProps> = ({
     const data =
         ask.objectType == 'SigMerkleGroth16Proof'
             ? {
-                vkeyHash: ask.sigMerkleGroth16Proof.vKeyhash.toString(),
-                groupRoot: ask.sigMerkleGroth16Proof.groupRoot.toString(),
-            }
+                  vkeyHash: ask.sigMerkleGroth16Proof.vKeyhash.toString(),
+                  groupRoot: ask.sigMerkleGroth16Proof.groupRoot.toString(),
+              }
             : ask.objectType == 'Signature'
-                ? {}
-                : ask.ethAddress.keccakAddress;
+            ? {}
+            : ask.ethAddress.keccakAddress;
 
     return (
         <a
@@ -252,7 +252,7 @@ export const DownloadBidButton: React.FC<DownloadBidButtonProps> = ({
                     nonce: bid.poseidonNonce.toString(),
                     filledBy: bid.fill.from,
                     pubJubJubFrom: bid.fill.fromPubkey,
-                    encryptedData: bid.fill.orderedEthAddress.encryptedPrivKey
+                    encryptedData: bid.fill.orderedEthAddress.encryptedPrivKey,
                 })
             )}`}
             download={`bidId-${bid.id.toString()}.json`}
@@ -264,42 +264,54 @@ export const DownloadBidButton: React.FC<DownloadBidButtonProps> = ({
     );
 };
 
-type CancelBidData = { cancelType: 'Bid', bid: Bid };
-type CancelAskData = { cancelType: 'Ask', ask: Ask };
-type CancelOrderData = { cancelType: 'Order', ask: Ask, order: Order };
+type CancelBidData = { cancelType: 'Bid'; bid: Bid };
+type CancelAskData = { cancelType: 'Ask'; ask: Ask };
+type CancelOrderData = { cancelType: 'Order'; ask: Ask; order: Order };
 
 interface CancelButtonProps {
     cancelData: CancelBidData | CancelAskData | CancelOrderData;
 }
 
 export const CancelButton: React.FC<CancelButtonProps> = ({ cancelData }) => {
-    const button = <button className="border-4 py-1 px-3 hover:bg-gray-100 rounded-md" >
-        Cancel
-    </button >
+    const button = (
+        <button className="border-4 py-1 px-3 hover:bg-gray-100 rounded-md">
+            Cancel
+        </button>
+    );
     // can cancel bid, order or ask
     const { data, isLoading, isSuccess, write, error } = useContractWrite({
         address: PRIVATE_MARKET_ADDRESS,
         abi: privateMarketABI,
-        functionName: 'cancel' + cancelData.cancelType as 'cancelBid' | 'cancelAsk' | 'cancelOrder',
+        functionName: ('cancel' + cancelData.cancelType) as
+            | 'cancelBid'
+            | 'cancelAsk'
+            | 'cancelOrder',
     });
     let args: {};
     if (cancelData.cancelType == 'Bid') {
         const bid = cancelData.bid;
-        args = { args: [bid.id] }
-    }
-    else if (cancelData.cancelType == 'Ask') {
+        args = { args: [bid.id] };
+    } else if (cancelData.cancelType == 'Ask') {
         const ask = cancelData.ask;
-        args = { args: [ask.id] }
+        args = { args: [ask.id] };
+    } else {
+        args = {
+            args: [
+                cancelData.ask.id,
+                cancelData.order.id,
+                cancelData.order.orderType,
+            ],
+        };
     }
-    else {
-        args = { args: [cancelData.ask.id, cancelData.order.id, cancelData.order.orderType] }
-    }
-    const cancelCall = () => write?.(args)
+    const cancelCall = () => write?.(args);
     return (
         <>
-            <button onClick={cancelCall} className="border-4 py-1 px-3 hover:bg-gray-100 rounded-md" >
+            <button
+                onClick={cancelCall}
+                className="border-4 py-1 px-3 hover:bg-gray-100 rounded-md"
+            >
                 Cancel
-            </button >
+            </button>
         </>
-    )
+    );
 };

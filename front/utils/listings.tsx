@@ -68,7 +68,10 @@ export const getListingRow = (
             : 'signature';
 
     return (
-        <tr className="text-sm md:text-base text-center" key={obj.id.toString()}>
+        <tr
+            className="text-sm md:text-base text-center"
+            key={obj.id.toString()}
+        >
             <td>{objType}</td>
             <td className="text-sm md:text-base text-center">
                 {selling + '...'}

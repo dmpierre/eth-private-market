@@ -36,8 +36,8 @@ export const getAskPrice = (ask: Ask) => {
         ask.objectType == 'ETHAddress'
             ? ask.ethAddress.price
             : ask.objectType == 'SigMerkleGroth16Proof'
-                ? ask.sigMerkleGroth16Proof.price
-                : ask.signature.price;
+            ? ask.sigMerkleGroth16Proof.price
+            : ask.signature.price;
     return price;
 };
 
@@ -85,8 +85,8 @@ export const AskCard: React.FC<AskCardProps> = ({
         inspectingAsk.objectType == 'ETHAddress'
             ? inspectingAsk.ethAddress.price
             : inspectingAsk.objectType == 'SigMerkleGroth16Proof'
-                ? inspectingAsk.sigMerkleGroth16Proof.price
-                : inspectingAsk.signature.price;
+            ? inspectingAsk.sigMerkleGroth16Proof.price
+            : inspectingAsk.signature.price;
 
     const { data, isLoading, isSuccess, write, error } = useContractWrite({
         address: PRIVATE_MARKET_ADDRESS,
@@ -161,7 +161,7 @@ export const AskCard: React.FC<AskCardProps> = ({
                                 });
                             } else if (
                                 inspectingAsk.objectType ==
-                                'SigMerkleGroth16Proof' &&
+                                    'SigMerkleGroth16Proof' &&
                                 message
                             ) {
                                 const hashedMessage = hashPersonalMessage(
@@ -237,12 +237,17 @@ export const AskCard: React.FC<AskCardProps> = ({
                             {isConnected ? (
                                 manageView ? (
                                     inspectingAsk.status == BigInt(1) ? (
-                                    <div className="text-end">
-                                        <CancelButton cancelData={{
-                                            cancelType: 'Ask',
-                                            ask: inspectingAsk
-                                        }} />
-                                    </div> ) : <></>
+                                        <div className="text-end">
+                                            <CancelButton
+                                                cancelData={{
+                                                    cancelType: 'Ask',
+                                                    ask: inspectingAsk,
+                                                }}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <></>
+                                    )
                                 ) : (
                                     <div className="text-end">{button}</div>
                                 )
@@ -259,7 +264,7 @@ export const AskCard: React.FC<AskCardProps> = ({
                 <div className="p-2 space-y-2 text-end pt-2">
                     {' '}
                     {inspectingAsk.objectType == 'SigMerkleGroth16Proof' &&
-                        !isSuccess ? (
+                    !isSuccess ? (
                         <input
                             onChange={(e) => setmessage(e.target.value)}
                             className="border-b-2 truncate focus:outline-none"
@@ -280,7 +285,7 @@ export const AskCard: React.FC<AskCardProps> = ({
                     ) : error ? (
                         <div>Tx reverted</div>
                     ) : inspectingAsk.objectType == 'ETHAddress' ||
-                        inspectingAsk.objectType == 'Signature' ? (
+                      inspectingAsk.objectType == 'Signature' ? (
                         confirmButton
                     ) : message ? (
                         confirmButton

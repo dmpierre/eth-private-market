@@ -97,7 +97,9 @@ export default function MyActivity() {
                     pubKey.result as JubJubPubKey
                 );
                 if (bid.from == address) {
-                    bidElements.push(getListingRow(bid, setinspectingBid, 'Manage'));
+                    bidElements.push(
+                        getListingRow(bid, setinspectingBid, 'Manage')
+                    );
                 }
                 if (bid.fill.from == address) {
                     fillsElements.push(
@@ -111,7 +113,7 @@ export default function MyActivity() {
     return (
         <TopContainer>
             <MarketPageTop></MarketPageTop>
-            <MarketNavBar />
+            <MarketNavBar active='activity'/>
             {isMounted ? (
                 isConnected ? (
                     inspectingBid ? (

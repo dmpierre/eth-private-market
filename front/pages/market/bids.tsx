@@ -50,9 +50,10 @@ export default function Bids() {
         <>
             <TopContainer>
                 <MarketPageTop></MarketPageTop>
-                <MarketNavBar />
+                <MarketNavBar active='bids' />
                 {inspectingListing ? (
                     <BidCard
+                        manageView={false}
                         inspectingBid={inspectingListing}
                         setinspectingBid={setinspectingListing}
                     />

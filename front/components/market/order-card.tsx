@@ -331,9 +331,14 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 {action == 'accept' && ask ? (
                     <AcceptOrder ask={ask} order={order} />
                 ) : action == 'cancel' && order.status == 1n && ask ? (
-                    <div className='text-end'> 
-                        <CancelButton cancelData={{cancelType: 'Order', ask: ask, order: order}} />
-
+                    <div className="text-end">
+                        <CancelButton
+                            cancelData={{
+                                cancelType: 'Order',
+                                ask: ask,
+                                order: order,
+                            }}
+                        />
                     </div>
                 ) : ask ? (
                     <div className="text-end">
