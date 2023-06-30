@@ -9,6 +9,7 @@ import { useAccount, useContractWrite } from 'wagmi';
 import { privateMarketABI } from '../../wagmi-src/generated';
 import {
     BackButton,
+    CancelButton,
     DownloadBidButton,
     FillButton,
     ProveButton,
@@ -21,6 +22,7 @@ import { ECDSAKeyPair } from 'private-market-utils/lib/browser';
 export const BidCard: React.FC<BidCardProps> = ({
     inspectingBid,
     setinspectingBid,
+    manageView
 }) => {
     //@ts-expect-error
     const snarkjs = window.snarkjs;
@@ -62,7 +64,17 @@ export const BidCard: React.FC<BidCardProps> = ({
             <div className="border-4 p-2 md:text-base text-sm rounded-md flex-col space-y-3 ">
                 <BidInspect inspectingBid={inspectingBid} />
             </div>
-            {fillView ? <></> : <div className="text-end">{button}</div>}
+            {
+                fillView ? <></> :
+                    manageView ?
+                        inspectingBid.status == BigInt(1) ?
+                            <div className='text-end'>
+                                <CancelButton cancelData={{ bid: inspectingBid, cancelType: 'Bid' }} />
+                            </div>
+                            : <></>
+                        :
+                        <div className="text-end">{button}</div>
+            }
             {isFilled ? (
                 <div className="flex flex-col space-y-3 text-end">
                     <div className="md:text-base text-sm text-ellipsis overflow-clip rounded-md space-y-3">

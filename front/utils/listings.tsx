@@ -21,7 +21,7 @@ export const getOrderRow = (
             </td>
             <td className="text-sm md:text-base text-center">{status}</td>
             {setinspectingOrder ? (
-                <td className="text-center hover:bg-gray-100 border-4 px-4 rounded-md">
+                <td className="text-sm md:text-base text-center hover:bg-gray-100 border-4 px-4 rounded-md">
                     <button
                         className="text-sm md:text-base"
                         onClick={() => setinspectingOrder(order)}
@@ -68,7 +68,7 @@ export const getListingRow = (
             : 'signature';
 
     return (
-        <tr key={obj.id.toString()}>
+        <tr className="text-sm md:text-base text-center" key={obj.id.toString()}>
             <td>{objType}</td>
             <td className="text-sm md:text-base text-center">
                 {selling + '...'}

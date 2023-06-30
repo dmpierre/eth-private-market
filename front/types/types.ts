@@ -127,6 +127,7 @@ export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 export interface BidCardProps {
     inspectingBid: Bid;
     setinspectingBid: (value: SetStateAction<Bid | undefined>) => void;
+    manageView: boolean;
 }
 
 export type MarketObjectType = 'ETHAddress' | 'Signature' | 'SigMerkleGroth16Proof';

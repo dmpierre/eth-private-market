@@ -97,7 +97,7 @@ export default function MyActivity() {
                     pubKey.result as JubJubPubKey
                 );
                 if (bid.from == address) {
-                    bidElements.push(getListingRow(bid, setinspectingBid));
+                    bidElements.push(getListingRow(bid, setinspectingBid, 'Manage'));
                 }
                 if (bid.fill.from == address) {
                     fillsElements.push(
@@ -116,6 +116,7 @@ export default function MyActivity() {
                 isConnected ? (
                     inspectingBid ? (
                         <BidCard
+                            manageView={true}
                             inspectingBid={inspectingBid}
                             setinspectingBid={setinspectingBid}
                         />
@@ -173,7 +174,7 @@ export default function MyActivity() {
                     </div>
                 )
             ) : (
-                <WaitForInfo description="Loading..." loadText={loadText} />
+                <></>
             )}
         </TopContainer>
     );

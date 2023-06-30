@@ -10,6 +10,7 @@ import {
     FillButton,
     ProveButton,
     DownloadOrderButton,
+    CancelButton,
 } from './buttons';
 import { useAccount, useContractReads, useContractWrite } from 'wagmi';
 import { privateMarketABI } from '@/wagmi-src/generated';
@@ -329,8 +330,11 @@ export const OrderCard: React.FC<OrderCardProps> = ({
             <div className="p-2 space-y-2 pt-2">
                 {action == 'accept' && ask ? (
                     <AcceptOrder ask={ask} order={order} />
-                ) : action == 'cancel' && order.status == 1n ? (
-                    <div> Cancel Order </div>
+                ) : action == 'cancel' && order.status == 1n && ask ? (
+                    <div className='text-end'> 
+                        <CancelButton cancelData={{cancelType: 'Order', ask: ask, order: order}} />
+
+                    </div>
                 ) : ask ? (
                     <div className="text-end">
                         {' '}

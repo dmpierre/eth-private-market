@@ -106,6 +106,11 @@ contract PrivateMarket {
         _;
     }
 
+    modifier bidIsActive(uint256 bidId) {
+        require(bids[bidId].status == 1, 'Bid is not active');
+        _;
+    }
+
     uint256 public cancelBlockTime;
 
     constructor(uint256 _cancelBlockTime) {
@@ -532,8 +537,7 @@ contract PrivateMarket {
         uint256[2] memory c,
         uint256[13] memory input,
         uint256 bidId
-    ) public {
-        require(bids[bidId].status == 1, 'Bid is not active');
+    ) public bidIsActive(bidId) {
         require(
             sellECDSAECDH.verifyProof(a, b, c, input),
             'Could not verify proof'
@@ -572,12 +576,11 @@ contract PrivateMarket {
         emit Fill(msg.sender, bidId);
     }
 
-    function cancelAsk(uint256 askId) public onlyAsker(askId, msg.sender) {
+    function cancelAsk(uint256 askId) public onlyAsker(askId, msg.sender) askIsActive(askId) {
         require(
             asks[askId].cancelBlock < block.number,
             'Cancel block is not past'
         );
-        require(asks[askId].status == 1, 'Ask is not active');
         emit AskCancelled(askId);
         asks[askId].status = 0;
     }
@@ -607,7 +610,7 @@ contract PrivateMarket {
         emit OrderCancelled(askId, orderId);
     }
 
-    function cancelBid(uint256 bidId) public onlyBidder(bidId, msg.sender) {
+    function cancelBid(uint256 bidId) public onlyBidder(bidId, msg.sender) bidIsActive(bidId) {
         require(
             bids[bidId].cancelBlock < block.number,
             'Cancel block is not past'
