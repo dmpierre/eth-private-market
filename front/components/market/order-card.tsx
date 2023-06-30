@@ -1,10 +1,8 @@
 import {
     Ask,
     AskResult,
-    Groth16Proof,
     JubJubPubKey,
     MarketActionType,
-    MarketObjectType,
     Order,
 } from '@/types/types';
 import {
@@ -57,14 +55,13 @@ const AcceptButton: React.FC<{ onClick: () => void }> = ({ onClick }) => {
 export const AcceptOrder: React.FC<AcceptOrderProps> = ({ ask, order }) => {
     const [acceptView, setacceptView] = useState(false);
     const [soldPriv, setsoldPriv] = useState<string | undefined>();
-    const [soldGroth16Proof, setsoldGroth16Proof] = useState<
-        undefined | Groth16Proof
-    >();
-    const [soldGroth16PublicSignals, setsoldGroth16PublicSignals] = useState<
-        undefined | bigint[] | string[]
-    >();
+
     const { address, isConnecting, isDisconnected, isConnected } = useAccount();
+
+    // result of proving
     const [proof, setproof] = useState();
+    const [publicSignals, setpublicSignals] = useState<bigint[] | string[] | undefined>();
+
     const [askKey, setaskKey] = useState<PrivKey | undefined>();
     const [commitment, setcommitment] = useState<bigint | undefined>();
     const [ecdh, setecdh] = useState<bigint[] | undefined>();
@@ -97,149 +94,137 @@ export const AcceptOrder: React.FC<AcceptOrderProps> = ({ ask, order }) => {
 
     return (
         <>
-            {acceptView ? (
-                isConnected ? ( // UX safety
-                    <>
-                        {proof ? (
-                            <></>
-                        ) : (
-                            <div className="space-y-4">
-                                <InputMarketKeys setmarketKey={setaskKey} />
-                                {commitment == order.sharedKeyCommitment ? (
-                                    ask.objectType == 'ETHAddress' ? (
-                                        <InputPrivKey
-                                            setsoldPriv={setsoldPriv}
-                                        />
-                                    ) : ask.objectType ==
-                                      'SigMerkleGroth16Proof' ? (
+            {
+                acceptView ? (
+                    isConnected ? (
+                        <>
+                            {
+                                proof && publicSignals && askKey && commitment == order.sharedKeyCommitment && ecdh ?
+                                    // we have everything we need to accept the order. go to tx. 
+                                    <div className="text-end">
+                                        {
+                                            isLoading ? (
+                                                <WaitForInfo
+                                                    description="Waiting for tx approval"
+                                                    loadText={loadText}
+                                                />
+                                            ) : data ? (
+                                                <div className="md:text-base pt-2 text-sm">
+                                                    {isSuccess ? (
+                                                        <>
+                                                            Tx:{' '}
+                                                            {data?.hash.slice(0, 10) +
+                                                                '...'}
+                                                        </>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                </div>
+                                            ) : error ? (
+                                                <>Tx reverted</>
+                                            ) : (
+                                                <FillButton
+                                                    disabled={false}
+                                                    proof={proof}
+                                                    publicSignals={
+                                                        publicSignals
+                                                    }
+                                                    write={write}
+                                                    args={[ask.id, order.id]}
+                                                />
+                                            )
+                                        }
+                                    </div>
+                                    :
+
+                                    ask.objectType == 'SigMerkleGroth16Proof' ?
+                                        // specific flow for sig merkle proof. the proof is already generated and uploaded by the user
                                         <>
+                                            <InputMarketKeys setmarketKey={setaskKey} />
                                             <InputGroth16Proof
                                                 setgroth16PublicSignals={
-                                                    setsoldGroth16PublicSignals
+                                                    setpublicSignals
                                                 }
                                                 setgroth16Proof={
-                                                    setsoldGroth16Proof
+                                                    setproof
                                                 }
                                             />
                                         </>
-                                    ) : (
+                                        :
                                         <>
-                                            <InputPrivKey
-                                                setsoldPriv={setsoldPriv}
-                                                type="eddsa"
-                                            />
+                                            <InputMarketKeys setmarketKey={setaskKey} />
+                                            {
+                                                ask.objectType == 'ETHAddress' ?
+                                                    <InputPrivKey setsoldPriv={setsoldPriv} />
+                                                    :
+                                                    <InputPrivKey setsoldPriv={setsoldPriv} type="eddsa" />
+                                            }
+                                            {
+                                                soldPriv && ecdh && commitment ?
+                                                    <div className="text-end">
+                                                        {
+                                                            // generate proof
+                                                            ask.objectType == 'ETHAddress' ?
+                                                                <ProveButton
+                                                                    inputs={prepareInputsSellETHAdddressNoECDH(
+                                                                        order,
+                                                                        ecdh,
+                                                                        commitment,
+                                                                        soldPriv
+                                                                    )}
+                                                                    wasmName="sellETHAddressNoECDH.wasm"
+                                                                    disabled={soldPriv == undefined}
+                                                                    setpublicSignals={
+                                                                        setpublicSignals
+                                                                    }
+                                                                    setproof={setproof}
+                                                                    zkeyUrl={
+                                                                        BUCKET_URL +
+                                                                        SELL_ECDSA_NOECDH_ZKEY
+                                                                    }
+                                                                    customButtonText="Prove"
+                                                                />
+                                                                : <ProveButton
+                                                                    inputs={prepareInputsSellEdDSASig(
+                                                                        order,
+                                                                        ecdh,
+                                                                        commitment,
+                                                                        soldPriv
+                                                                    )}
+                                                                    wasmName="mainSellSigPublicMessageEdDSA.wasm"
+                                                                    disabled={soldPriv == undefined}
+                                                                    setpublicSignals={
+                                                                        setpublicSignals
+                                                                    }
+                                                                    setproof={setproof}
+                                                                    zkeyUrl={
+                                                                        BUCKET_URL + SELL_EDDSA_SIG
+                                                                    }
+                                                                    customButtonText="Prove"
+                                                                />
+                                                        }
+                                                    </div>
+                                                    :
+                                                    <></>
+                                            }
                                         </>
-                                    )
-                                ) : (
-                                    <div>{commitmentFeedback}</div>
-                                )}
-                            </div>
-                        )}
-                        {(soldPriv ||
-                            (soldGroth16Proof && soldGroth16PublicSignals)) &&
-                        askKey &&
-                        commitment == order.sharedKeyCommitment &&
-                        ecdh ? (
-                            (soldGroth16Proof && soldGroth16PublicSignals) ||
-                            ask.objectType == 'SigMerkleGroth16Proof' ? (
-                                <div className="text-end">
-                                    {isLoading ? (
-                                        <WaitForInfo
-                                            description="Waiting for tx approval"
-                                            loadText={loadText}
-                                        />
-                                    ) : data ? (
-                                        <div className="md:text-base pt-2 text-sm">
-                                            {isSuccess ? (
-                                                <>
-                                                    Tx:{' '}
-                                                    {data?.hash.slice(0, 10) +
-                                                        '...'}
-                                                </>
-                                            ) : (
-                                                <></>
-                                            )}
-                                        </div>
-                                    ) : error ? (
-                                        <>Tx reverted</>
-                                    ) : (
-                                        <FillButton
-                                            disabled={false}
-                                            proof={soldGroth16Proof}
-                                            publicSignals={
-                                                soldGroth16PublicSignals
-                                            }
-                                            write={write}
-                                            args={[ask.id, order.id]}
-                                        />
-                                    )}
-                                </div>
-                            ) : soldPriv ? (
-                                ask.objectType == 'ETHAddress' ? (
-                                    <div className="text-end">
-                                        <ProveButton
-                                            inputs={prepareInputsSellETHAdddressNoECDH(
-                                                order,
-                                                ecdh,
-                                                commitment,
-                                                soldPriv
-                                            )}
-                                            wasmName="sellETHAddressNoECDH.wasm"
-                                            disabled={soldPriv == undefined}
-                                            setpublicSignals={
-                                                setsoldGroth16PublicSignals
-                                            }
-                                            setproof={setproof}
-                                            zkeyUrl={
-                                                BUCKET_URL +
-                                                SELL_ECDSA_NOECDH_ZKEY
-                                            }
-                                            customButtonText="Prove"
-                                        />
-                                    </div>
-                                ) : (
-                                    <div className="text-end">
-                                        <ProveButton
-                                            inputs={prepareInputsSellEdDSASig(
-                                                order,
-                                                ask,
-                                                ecdh,
-                                                commitment,
-                                                soldPriv
-                                            )}
-                                            wasmName="mainSellSigPublicMessageEdDSA.wasm"
-                                            disabled={soldPriv == undefined}
-                                            setpublicSignals={
-                                                setsoldGroth16PublicSignals
-                                            }
-                                            setproof={setproof}
-                                            zkeyUrl={
-                                                BUCKET_URL + SELL_EDDSA_SIG
-                                            }
-                                            customButtonText="Prove"
-                                        />
-                                    </div>
-                                )
-                            ) : (
-                                <> </>
-                            )
-                        ) : (
-                            <></>
-                        )}
-                    </>
+
+                            }
+                        </>
+                    ) : (
+                        <ConnectWallet />
+                    )
                 ) : (
-                    <ConnectWallet />
+                    <div className="flex items-center space-x-5 justify-end">
+                        <div>
+                            <DownloadOrderButton ask={ask} order={order} />
+                        </div>
+                        <div className=" text-end">
+                            <AcceptButton onClick={() => setacceptView(true)} />
+                        </div>
+                    </div>
                 )
-            ) : (
-                <div className="flex items-center space-x-5 justify-end">
-                    <div>
-                        <DownloadOrderButton ask={ask} order={order} />
-                    </div>
-                    <div className=" text-end">
-                        <AcceptButton onClick={() => setacceptView(true)} />
-                    </div>
-                </div>
-            )}
+            }
         </>
     );
 };
@@ -300,8 +285,8 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         order.orderType == 0n
             ? 'proof'
             : order.orderType == 1n
-            ? 'signature'
-            : 'address';
+                ? 'signature'
+                : 'address';
     const status = order.status == 1n ? 'open' : 'closed';
 
     return (

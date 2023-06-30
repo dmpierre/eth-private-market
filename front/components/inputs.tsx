@@ -258,7 +258,7 @@ export const InputMarketKeys: React.FC<InputMarketKeysProps> = ({
 };
 
 interface InputGroth16ProofProps {
-    setgroth16Proof: React.Dispatch<SetStateAction<undefined | Groth16Proof>>;
+    setgroth16Proof: React.Dispatch<SetStateAction<undefined>>;
     setgroth16PublicSignals: React.Dispatch<
         SetStateAction<undefined | bigint[] | string[]>
     >;

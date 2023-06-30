@@ -121,7 +121,7 @@ export const FillButton: React.FC<FillButtonProps> = ({
     return (
         <button
             disabled={disabled}
-            className="border-4 p-2 hover:bg-gray-100 rounded-md"
+            className="border-4 py-1 px-3 hover:bg-gray-100 rounded-md"
             onClick={() => {
                 const { pi_a, pi_b, pi_c, pubInputs } = prepareCallData(
                     proof,

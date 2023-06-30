@@ -64,7 +64,6 @@ export const prepareInputsSellETHAdddressNoECDH = (
 
 export const prepareInputsSellEdDSASig = (
     order: Order,
-    ask: Ask,
     sharedKey: bigint[],
     keyCommitment: bigint,
     priv: string
