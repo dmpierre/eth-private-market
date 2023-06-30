@@ -15,7 +15,6 @@ cd $HOME
 
 nvm install 18.16.0 && nvm use 18.16.0
 nvm install --lts
-npm install --location=global yarn
 
 # Install snarkjs
 npm install -g snarkjs
@@ -30,4 +29,4 @@ git submodule update
 npx task createFieldSources
 npx task buildProver
 
-export RAPIDSNARK_PATH="$HOME/rapidsnark/build/prover"
+echo "export RAPIDSNARK_PATH=$HOME/rapidsnark/build/prover" >> ~/.bashrc

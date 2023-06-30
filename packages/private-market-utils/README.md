@@ -2,7 +2,7 @@
 
 Contains utilities to work with `private-market`.
 
-### Selling a groth16 proof
+### How to sell a groth16 proof
 
 #### Listing an ask for a groth16 proof
 
@@ -66,7 +66,7 @@ All paths are provided relatively to this folder.
 $ yarn run ts-node scripts/buildInputGroth16Proof.ts ../relative/path/to/proof.json ../relative/path/to/publicSignals.json ../relative/path/to/vkey.json ../relative/path/to/ask.json ../relative/path/to/order.json ../relative/path/to/output.json
 ```
 
-The `output.json` file will be what we will input to our circuit for recursive proving.
+The `scripts/output.json` file will be what we will input to our circuit for recursive proving.
 
 #### Generating a recursive proof
 
@@ -80,3 +80,21 @@ The `output.json` file will be what we will input to our circuit for recursive p
 5. Generate the recursive proof by running: `prove.sh ./relative/path/to/first-proof-prepared-inputs.json ./relative/path/to/cpp/verifyAndEncryptSigMerkleProof ./relative/path/to/verifyAndEncryptSigMerkleProof.vkey`. You should see a bunch of logging. This is relative to generating the witness. Generating the proof can take a bit of time.
 
 That's it! Get the `proof.json` and `public.json` files which were generated during the last step. Get your initial `askSigMerkleGroth16Proof-user-1234567890.json` file. Go to the marketplace and fill the order with each of those files. 
+
+#### Getting the public signals from a decrypted a groth16 proof
+
+When you decrypt a groth16 proof, you will not get the public signals with it. 
+
+You can get those either from your initial order data.
+
+For the `sig-merkle` proof, it consists of the array:
+
+```json
+[
+    groupRoot, // found by downloading ask data
+    messageHash[0],
+    messageHash[1]
+    messageHash[2]
+    messageHash[3]
+]
+```
