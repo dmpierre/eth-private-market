@@ -12,10 +12,11 @@ import {
     DownloadOrderButton,
     CancelButton,
 } from './buttons';
-import { useAccount, useContractReads, useContractWrite } from 'wagmi';
+import { useAccount, useContractReads, useContractWrite, useNetwork } from 'wagmi';
 import { privateMarketABI } from '@/wagmi-src/generated';
 import {
     BUCKET_URL,
+    CHAIN_ID,
     PRIVATE_MARKET_ADDRESS,
     SELL_ECDSA_NOECDH_ZKEY,
     SELL_EDDSA_SIG,
@@ -76,7 +77,10 @@ export const AcceptOrder: React.FC<AcceptOrderProps> = ({ ask, order }) => {
         address: PRIVATE_MARKET_ADDRESS,
         abi: privateMarketABI,
         functionName: ('acceptOrder' + `${ask.objectType}`) as MarketActionType,
+        chainId: CHAIN_ID,
     });
+
+    const { chain } = useNetwork();
     const loadText = useLoadingSpinner({ spinner: LOADING_SPINNER }, isLoading);
 
     useEffect(() => {
@@ -101,10 +105,10 @@ export const AcceptOrder: React.FC<AcceptOrderProps> = ({ ask, order }) => {
                 isConnected ? (
                     <>
                         {proof &&
-                        publicSignals &&
-                        askKey &&
-                        commitment == order.sharedKeyCommitment &&
-                        ecdh ? (
+                            publicSignals &&
+                            askKey &&
+                            commitment == order.sharedKeyCommitment &&
+                            ecdh ? (
                             // we have everything we need to accept the order. go to tx.
                             <div className="text-end">
                                 {isLoading ? (
@@ -230,17 +234,6 @@ export const AcceptOrder: React.FC<AcceptOrderProps> = ({ ask, order }) => {
     );
 };
 
-export const AcceptSigOrder: React.FC<AcceptOrderProps> = ({ ask, order }) => {
-    return <></>;
-};
-
-export const AcceptProofOrder: React.FC<AcceptOrderProps> = ({
-    ask,
-    order,
-}) => {
-    return <></>;
-};
-
 interface OrderCardProps {
     order: Order;
     setinspectingOrder: React.Dispatch<React.SetStateAction<Order | undefined>>;
@@ -264,12 +257,14 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 address: PRIVATE_MARKET_ADDRESS,
                 functionName: 'asks',
                 args: [order.askId],
+                chainId: CHAIN_ID
             },
             {
                 abi: privateMarketABI,
                 address: PRIVATE_MARKET_ADDRESS,
                 functionName: 'getAskPubKey',
                 args: [order.askId],
+                chainId: CHAIN_ID
             },
         ],
     });
@@ -286,8 +281,8 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         order.orderType == 0n
             ? 'proof'
             : order.orderType == 1n
-            ? 'signature'
-            : 'address';
+                ? 'signature'
+                : 'address';
     const status = order.status == 1n ? 'open' : 'closed';
 
     return (

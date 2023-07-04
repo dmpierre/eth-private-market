@@ -1,4 +1,4 @@
-import { PRIVATE_MARKET_ADDRESS } from '@/app.conf';
+import { CHAIN_ID, PRIVATE_MARKET_ADDRESS } from '@/app.conf';
 import { privateMarketABI } from '@/wagmi-src/generated';
 import { useContractWrite } from 'wagmi';
 import { MarketActionType } from '@/types/types';
@@ -7,6 +7,7 @@ export const useBidAsk = (marketAction: MarketActionType) => {
         address: PRIVATE_MARKET_ADDRESS,
         abi: privateMarketABI,
         functionName: marketAction,
+        chainId: CHAIN_ID
     });
 
     return {

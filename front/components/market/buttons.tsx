@@ -6,7 +6,7 @@ import { prepareCallData } from '@/utils/contractUtils';
 import { exportEncryptedOrderData } from '@/utils/misc';
 import { Order, Ask, Bid } from '@/types/types';
 import { useContractWrite } from 'wagmi';
-import { PRIVATE_MARKET_ADDRESS } from '@/app.conf';
+import { CHAIN_ID, PRIVATE_MARKET_ADDRESS } from '@/app.conf';
 import { privateMarketABI } from '@/wagmi-src/generated';
 
 (BigInt.prototype as any).toJSON = function () {
@@ -286,6 +286,7 @@ export const CancelButton: React.FC<CancelButtonProps> = ({ cancelData }) => {
             | 'cancelBid'
             | 'cancelAsk'
             | 'cancelOrder',
+        chainId: CHAIN_ID
     });
     let args: {};
     if (cancelData.cancelType == 'Bid') {

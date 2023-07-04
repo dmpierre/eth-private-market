@@ -13,6 +13,9 @@ import { BidCard } from '@/components/market/bid-card';
 import { ListingsTable } from '@/components/market/listings-table';
 import { WaitForInfo } from '@/components/wait-info';
 import { LOADING_SPINNER, useLoadingSpinner } from '@/hooks/useLoadingSpinner';
+import { useNetwork } from 'wagmi';
+import { CHAIN_ID } from '@/app.conf';
+import { ConnectWallet } from '@/components/wallet';
 
 export default function Bids() {
     const { data, refetch } = useListings('bids');
@@ -25,6 +28,7 @@ export default function Bids() {
         { spinner: LOADING_SPINNER },
         !isMounted
     );
+    const { chain } = useNetwork();
     const [inspectingListing, setinspectingListing] = useState<
         undefined | Bid
     >();
@@ -51,21 +55,28 @@ export default function Bids() {
             <TopContainer>
                 <MarketPageTop></MarketPageTop>
                 <MarketNavBar active="bids" />
-                {inspectingListing ? (
-                    <BidCard
-                        manageView={false}
-                        inspectingBid={inspectingListing}
-                        setinspectingBid={setinspectingListing}
-                    />
-                ) : isMounted ? (
-                    <ListingsTable
-                        type="bids"
-                        listingsElements={bidElements}
-                        isMounted
-                    />
-                ) : (
-                    <WaitForInfo loadText={loadText} description="Loading..." />
-                )}
+                {
+                    chain?.id == CHAIN_ID ?
+                        <>
+                            {inspectingListing ? (
+                                <BidCard
+                                    manageView={false}
+                                    inspectingBid={inspectingListing}
+                                    setinspectingBid={setinspectingListing}
+                                />
+                            ) : isMounted ? (
+                                <ListingsTable
+                                    type="bids"
+                                    listingsElements={bidElements}
+                                    isMounted
+                                />
+                            ) : (
+                                <WaitForInfo loadText={loadText} description="Loading..." />
+                            )}
+                        </>
+                        :
+                        <ConnectWallet />
+                }
             </TopContainer>
         </>
     );

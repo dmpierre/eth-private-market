@@ -1,11 +1,12 @@
 import {
     BUCKET_URL,
+    CHAIN_ID,
     PRIVATE_MARKET_ADDRESS,
     SELL_ECDSA_ECDH_ZKEY,
 } from '@/app.conf';
 import { BidCardProps, ZERO_ADDRESS } from '@/types/types';
 import { useState } from 'react';
-import { useAccount, useContractWrite } from 'wagmi';
+import { useAccount, useContractWrite, useNetwork } from 'wagmi';
 import { privateMarketABI } from '../../wagmi-src/generated';
 import {
     BackButton,
@@ -40,8 +41,10 @@ export const BidCard: React.FC<BidCardProps> = ({
         address: PRIVATE_MARKET_ADDRESS,
         abi: privateMarketABI,
         functionName: 'fillETHAddressBid',
+        chainId: CHAIN_ID
     });
     const [soldPriv, setsoldPriv] = useState<undefined | string>();
+    const { chain } = useNetwork()
 
     const isFilled = inspectingBid.fill.from != ZERO_ADDRESS;
     const button =
@@ -149,7 +152,7 @@ export const BidCard: React.FC<BidCardProps> = ({
                     )}
                     {proof && publicSignals && !isSuccess ? (
                         <div className="text-end">
-                            {isConnected ? (
+                            {isConnected && chain?.id == CHAIN_ID ? (
                                 <FillButton
                                     disabled={error != undefined}
                                     proof={proof}

@@ -1,8 +1,8 @@
-import { PRIVATE_MARKET_ADDRESS } from '@/app.conf';
+import { CHAIN_ID, PRIVATE_MARKET_ADDRESS } from '@/app.conf';
 import { Ask, Order } from '@/types/types';
 import { privateMarketABI } from '@/wagmi-src/generated';
 import { useState } from 'react';
-import { useAccount, useContractWrite } from 'wagmi';
+import { useAccount, useContractWrite, useNetwork } from 'wagmi';
 import { BackButton, CancelButton, DownloadAskButton } from './buttons';
 import { AskInspect } from './ask-inspect';
 import { WaitForInfo } from '../wait-info';
@@ -36,8 +36,8 @@ export const getAskPrice = (ask: Ask) => {
         ask.objectType == 'ETHAddress'
             ? ask.ethAddress.price
             : ask.objectType == 'SigMerkleGroth16Proof'
-            ? ask.sigMerkleGroth16Proof.price
-            : ask.signature.price;
+                ? ask.sigMerkleGroth16Proof.price
+                : ask.signature.price;
     return price;
 };
 
@@ -63,7 +63,7 @@ export const AskCard: React.FC<AskCardProps> = ({
     const { address, isConnecting, isDisconnected, isConnected } = useAccount();
     const isMounted = useIsMounted();
     const { orders, refetch: refetchOrders } = useAskIDOrders(inspectingAsk.id);
-
+    const { chain } = useNetwork();
     useListingEvent('Order', refetchOrders);
     useListingEvent('OrderAccepted', refetchOrders);
 
@@ -85,14 +85,15 @@ export const AskCard: React.FC<AskCardProps> = ({
         inspectingAsk.objectType == 'ETHAddress'
             ? inspectingAsk.ethAddress.price
             : inspectingAsk.objectType == 'SigMerkleGroth16Proof'
-            ? inspectingAsk.sigMerkleGroth16Proof.price
-            : inspectingAsk.signature.price;
+                ? inspectingAsk.sigMerkleGroth16Proof.price
+                : inspectingAsk.signature.price;
 
     const { data, isLoading, isSuccess, write, error } = useContractWrite({
         address: PRIVATE_MARKET_ADDRESS,
         abi: privateMarketABI,
         functionName: functionName,
         value: value,
+        chainId: CHAIN_ID
     });
     const loadText = useLoadingSpinner({ spinner: LOADING_SPINNER }, isLoading);
 
@@ -161,7 +162,7 @@ export const AskCard: React.FC<AskCardProps> = ({
                                 });
                             } else if (
                                 inspectingAsk.objectType ==
-                                    'SigMerkleGroth16Proof' &&
+                                'SigMerkleGroth16Proof' &&
                                 message
                             ) {
                                 const hashedMessage = hashPersonalMessage(
@@ -210,7 +211,9 @@ export const AskCard: React.FC<AskCardProps> = ({
             )}
         </div>
     );
-
+    
+    console.log(chain);
+    
     return (
         <div className="flex flex-col space-y-2">
             {inspectingOrder ? (
@@ -234,7 +237,7 @@ export const AskCard: React.FC<AskCardProps> = ({
                             <div className="">
                                 <DownloadAskButton ask={inspectingAsk} />
                             </div>
-                            {isConnected ? (
+                            {isConnected && chain?.id == CHAIN_ID ? (
                                 manageView ? (
                                     inspectingAsk.status == BigInt(1) ? (
                                         <div className="text-end">
@@ -264,7 +267,7 @@ export const AskCard: React.FC<AskCardProps> = ({
                 <div className="p-2 space-y-2 text-end pt-2">
                     {' '}
                     {inspectingAsk.objectType == 'SigMerkleGroth16Proof' &&
-                    !isSuccess ? (
+                        !isSuccess ? (
                         <input
                             onChange={(e) => setmessage(e.target.value)}
                             className="border-b-2 truncate focus:outline-none"
@@ -285,7 +288,7 @@ export const AskCard: React.FC<AskCardProps> = ({
                     ) : error ? (
                         <div>Tx reverted</div>
                     ) : inspectingAsk.objectType == 'ETHAddress' ||
-                      inspectingAsk.objectType == 'Signature' ? (
+                        inspectingAsk.objectType == 'Signature' ? (
                         confirmButton
                     ) : message ? (
                         confirmButton

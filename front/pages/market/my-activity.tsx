@@ -1,3 +1,4 @@
+import { CHAIN_ID } from '@/app.conf';
 import { AskCard } from '@/components/market/ask-card';
 import { BidCard } from '@/components/market/bid-card';
 import { ListingsTable } from '@/components/market/listings-table';
@@ -24,7 +25,7 @@ import {
 import { formatAsk, formatBid } from '@/utils/formatListing';
 import { getListingRow, getOrderRow } from '@/utils/listings';
 import { useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 
 export default function MyActivity() {
     const [inspectingOrder, setinspectingOrder] = useState<undefined | Order>();
@@ -32,7 +33,7 @@ export default function MyActivity() {
     const { data: bidsData, refetch: refetchBids } = useListings('bids');
     const { address, isConnecting, isDisconnected, isConnected } = useAccount();
     const isMounted = useIsMounted();
-
+    const { chain } = useNetwork();
     useListingEvent('Ask', refetchAsks);
     useListingEvent('AskCancelled', refetchAsks);
     useListingEvent('Bid', refetchBids);
@@ -115,7 +116,7 @@ export default function MyActivity() {
             <MarketPageTop></MarketPageTop>
             <MarketNavBar active="activity" />
             {isMounted ? (
-                isConnected ? (
+                isConnected && chain?.id == CHAIN_ID ? (
                     inspectingBid ? (
                         <BidCard
                             manageView={true}

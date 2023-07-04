@@ -14,12 +14,13 @@ import {
     SigningKey,
 } from '@/types/types';
 import { isAddress } from 'viem';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 import { ConnectWallet } from '@/components/wallet';
 import { WaitForInfo } from '@/components/wait-info';
 import assert from 'assert';
 import { initUser } from '@/utils/contractUtils';
 import { exportMarketKey } from '@/utils/misc';
+import { CHAIN_ID } from '@/app.conf';
 
 enum Groth16Feedback {
     InvalidVKeyHash = 'Invalid vkey hash',
@@ -69,8 +70,9 @@ export default function List() {
     const [price, setprice] = useState<number>(1);
     const { address, isConnecting, isDisconnected } = useAccount();
 
-    const userWallet = <a>Download Proof</a>;
     const { user, nonce, pubJubjub } = initUser();
+    
+    const { chain } = useNetwork()
 
     /**
      * Bid is only available for ETHAddress
@@ -188,8 +190,10 @@ export default function List() {
                 <span className="ml-4">{rootFeedback}</span>
             </>
         );
-
-    const listButton = (
+    
+    
+    const listButton = 
+        chain?.id == CHAIN_ID ? (
         <a
             href={`data:text/json;charset=utf-8,${encodeURIComponent(
                 JSON.stringify(exportMarketKey(user, marketAction))
@@ -246,8 +250,10 @@ export default function List() {
                 {actionType}
             </button>
         </a>
-    );
-
+    ) : 
+        <ConnectWallet />
+    ;
+    
     return (
         <TopContainer>
             <MarketPageTop></MarketPageTop>
