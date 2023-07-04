@@ -12,7 +12,12 @@ import {
     DownloadOrderButton,
     CancelButton,
 } from './buttons';
-import { useAccount, useContractReads, useContractWrite, useNetwork } from 'wagmi';
+import {
+    useAccount,
+    useContractReads,
+    useContractWrite,
+    useNetwork,
+} from 'wagmi';
 import { privateMarketABI } from '@/wagmi-src/generated';
 import {
     BUCKET_URL,
@@ -105,10 +110,10 @@ export const AcceptOrder: React.FC<AcceptOrderProps> = ({ ask, order }) => {
                 isConnected ? (
                     <>
                         {proof &&
-                            publicSignals &&
-                            askKey &&
-                            commitment == order.sharedKeyCommitment &&
-                            ecdh ? (
+                        publicSignals &&
+                        askKey &&
+                        commitment == order.sharedKeyCommitment &&
+                        ecdh ? (
                             // we have everything we need to accept the order. go to tx.
                             <div className="text-end">
                                 {isLoading ? (
@@ -257,14 +262,14 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 address: PRIVATE_MARKET_ADDRESS,
                 functionName: 'asks',
                 args: [order.askId],
-                chainId: CHAIN_ID
+                chainId: CHAIN_ID,
             },
             {
                 abi: privateMarketABI,
                 address: PRIVATE_MARKET_ADDRESS,
                 functionName: 'getAskPubKey',
                 args: [order.askId],
-                chainId: CHAIN_ID
+                chainId: CHAIN_ID,
             },
         ],
     });
@@ -281,8 +286,8 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         order.orderType == 0n
             ? 'proof'
             : order.orderType == 1n
-                ? 'signature'
-                : 'address';
+            ? 'signature'
+            : 'address';
     const status = order.status == 1n ? 'open' : 'closed';
 
     return (

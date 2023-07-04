@@ -1,0 +1,561 @@
+import { TopContainer, Title, SectionTitle, Paragraph, LinkToTab } from '@/components/page-components';
+import Image from 'next/image';
+import askPrivateKeySetup from '@/public/post/imgs/ask-eth-address.png';
+import bidPrivateKeySetup from '@/public/post/imgs/bid-eth-address.png';
+import askSignature from '@/public/post/imgs/sell-signature.png';
+import recursiveProof from '@/public/post/imgs/recursive-proof.png';
+
+
+import Link from 'next/link';
+
+<br />
+
+<SectionTitle text={'What is this?'} size={'text-xl'} />
+
+<br />
+
+Private Market is a permissionless p2p marketplace that enables any user to bid/ask private keys, signatures and groth16 proofs.
+
+<br/>
+
+<SectionTitle text={'Summary'} size={'text-xl'} />
+
+<br />
+
+We present here our zero-knowledge circuits and contracts used for privately exchanging cryptographic objects on Ethereum.
+
+<br/>
+
+First, we outline how property, encryption and commitment proofs work in the context of a p2p market. Then, we detail setups of increasing complexity for selling ECDSA keypairs, EdDSA Signatures and groth16 proofs in a trustless and privacy-preserving manner. While selling private keys of ethereum addresses and EdDSA signatures is relatively straightfoward, we have had to leverage recursivity to enable anonymous trades of groth16 proofs.
+
+<br />
+
+We conclude by describing a setup where users can trustlessly sell execution of transaction themselves on Ethereum, laying out a potential construction of stealth transactions. Interestingly, this setup could be generalized to any kind of contract interactions - aka *stealth interactions*.
+
+<br/>
+
+Our motivation is twofold. First, it might be of interest to demonstrate how any provable computation can be privately traded on Ethereum. Second, we believe that those kind of zk-powered marketplaces open up design and protocol questions and avenues for proof-gated and ethereum dapps makers and users.
+
+<br/>
+
+<SectionTitle text={'General setup: three building blocks'} size={'text-xl'} />
+
+<br />
+
+The initial zk-marketplace protocol proposal laid out the different and complementary proofs necessary for trading objects with provable attributes on Ethereum. Nick Ulven's seminal work described three main components, namely property (denoted "assertion proof" in the rest of this post), commitment and encryption proofs[^1].
+
+<br />
+
+Each of those proofs are carried out using succinct zero-knowledge cryptography, giving both parties of a trade the ability to selectively disclose inputs and be convinced that the data being bought satisfies a property with high probability.
+
+<br />
+
+**Assertion proof: $f(data, property) = true$**
+
+<br />
+
+The assertion proof consists in proving that an assertion holds true regarding some piece of data being sold. A good example is to prove that the statement that a private key resolves to a particular Ethereum address is true: $f(secretKey, address) = true$. The assertion proof convinces the buyer that the private piece of data being sold indeed possess some property that he is interested in.
+
+<br />
+
+**Encryption proof: $enc(data, key)$**
+
+<br />
+
+The encryption proof aims to convince the buyer that the private piece of data has been encrypted using a desired key. This key will most likely be a buyer-seller ECDH value. 
+
+<br />
+
+**Commitment proof: $h(data)$**
+
+<br />
+
+A commitment proof can play different roles. Hence, there exists different kinds of commitment proofs. In general, the commitment proof aims at proving that what is being sold and how it is sold verifies some earlier committed value. 
+
+<br />
+
+For instance, it could ensure that the data being sold at the time of exchange corresponds to the data that has been listed initally - i.e. $h(data_{sold}) == h(data_{listed})$.
+It could also ensure that when the buyer and the seller share an encryption key, the sale will take place only if the shared key resolves to a previously done commitment - often $h(sharedKey)$
+
+<br />
+
+Assertion, encryption and commitment proofs might not be exhaustive of what a marketplace construction could look like. However, they do form a set of primitives out of which more or less complex setups can be thought of. 
+
+<br />
+
+**A trivial sale**
+
+<br />
+
+Let's go over how those three different proofs work together and pretend that Alice is selling Bob an odd number:
+
+<br />
+
+<div className="flex pl-10 justify-start"> 
+    <ol className="list-decimal">
+    <li>
+        Alice has this valuable piece of information, consisting of knowing an odd number. She asks 1 ether for it.
+    </li>
+        <ul className="pl-5 list-disc"> 
+            <li>
+                She commits to this number by posting its hash on a smart contract.
+            </li>
+            <li>
+                She posts her public key, with which anyone can compute a shared key.
+            </li>
+        </ul>
+    <li>
+        Bob wants to know what is this odd number that Alice is proposing. 
+        <ul className="pl-5 list-disc list-outside">
+            <li>
+                He computes his shared key with Alice
+            </li>
+            <li>
+                He posts the public key with which he computed his shared key
+            </li>
+            <li>
+                He commits to the shared key by posting its hash on the smart contract.
+            </li>
+            <li>
+                He escrows 1 ether. 
+            </li>
+        </ul>
+    </li>
+    <li>
+        Alice can now sell to Bob her odd number. She will compute a single proof consisting of:
+        <ul className="pl-5 list-disc list-outside">
+            <li>
+                Showing that her number is not divisible by 2 - the assertion proof.
+            </li>
+            <li>
+                Showing that she correctly encrypted the odd number - the encryption proof. This encrypted data is posted on chain.
+            </li>
+            <li>
+                Showing that she used the same shared key as Bob expected and that the odd number being sold is the same as the one committed earlier - the commitment proof.
+            </li>
+        </ul>
+    </li>
+    </ol>
+</div>
+
+<br />
+
+Upon the smart contract validating the proof, the escrow will be released. Alice can profit from 1 ETH. Using the shared key, Bob will decrypt the onchain posted data and enjoy his odd number. 
+
+<br />
+
+<SectionTitle text={'Selling private keys'} size={'text-xl'} />
+
+<br />
+We detail here two setups (ask and bid) for selling Ethereum private keys. As secp256k1 keypairs form the backbone of the Ethereum and Bitcoin blockchains, it felt natural to us to explore this avenue.
+
+<br />
+
+**Placing an ask on an ethereum address**
+
+<br />
+Placing an ask on an Ethereum address is not very different from placing an ask on any other kind of asset. 
+
+<br />
+
+<div className="flex pl-10 justify-start"> 
+    <ol className="list-decimal">
+        <li>
+            A seller commits to an address for which he would be ready to sell the private key and posts a corresponding price. 
+        </li>
+        <li>
+            A buyer escrows the corresponding price amount in ETH on a smart contract (the "market") and posts his public key . He computes:
+            <ul className="pl-5 list-disc"> 
+                <li>
+                    an ECDH value (the "shared key") using the seller's public key point.
+                </li>
+                <li>
+                    a commmitment to the shared key.
+                </li>
+            </ul>
+        </li>
+        <li>
+            To release the escrow, the seller posts on-chain a proof showing:
+            <ul className="pl-5 list-disc"> 
+                <li>
+                Assertion correctness: the address can be derived from the provided private key.
+                </li>
+                <li>
+                Encryption correctness: the private key has been correctly poseidon encrypted
+                </li>
+                <li>
+                Commitments correctness: the encryption key corresponds to the committed shared key. The derived address corresponds to the earlier asked address.
+                </li>
+            </ul>
+        </li>
+    </ol>
+</div>
+
+<br />
+
+Since the proof data comprises the encrypted data, the buyer will now have access to the encrypted private key onchain.
+
+<br />
+
+<div className="flex justify-center">
+    <Image alt="ask-eth" style={{maxWidth: "100%"}} src={askPrivateKeySetup} />
+</div>
+
+<br />
+
+We provide a circuit for this setup <a className="underline" target={"_blank"} href={"https://github.com/dmpierre/eth-private-market/blob/main/packages/circuits/circom/eth-address/no-ecdh-check/sellETHAddressNoECDH.circom"}> here</a>.
+
+<br />
+
+**Placing a bid on an ethereum address**
+
+<br />
+
+Placing a bid differs from placing an ask since the buyer expresses his intent to buy an address first. He will be the first to post his public key point. This entails a different proof from the seller's viewpoint:
+
+<br />
+<div className="flex pl-10 justify-start"> 
+    <ol className="list-decimal">
+        <li>
+            A buyer places a bid on an Ethereum address and escrows a corresponding amount of ETH on the market contract. 
+        </li>
+        <li>
+            A seller posts on-chain a proof: 
+            <ul className="pl-5 list-disc"> 
+                <li>Assertion correctness: the Ethereum address can be derived from the provided private key. </li>
+                <li>Encryption correctness: the private key has been correctly encrypted  </li>
+                <li>Commitments correctness: the seller used the buyer's committed public key point. The derived address corresponds to the address being bid. </li>
+                <li>Key exchange correctness: the seller's communicated public key point corresponds to the one that has been used to compute the shared encryption key. </li>
+            </ul>
+        </li>
+    </ol>
+</div>
+
+<br />
+
+<div className="flex justify-center">
+    <Image alt="ask-eth" style={{maxWidth: "100%"}} src={bidPrivateKeySetup} />
+</div>
+
+<br />
+
+A bid process hence has a reduced number of steps. However, the seller is required to prove key exchange correctness to his proof statement. If not, a seller could communicate a different public key point from the one he derived using the private key used to compute the shared encryption key.
+
+<br />
+
+We provide a circuit for this setup <a className="underline" target={"_blank"} href={"https://github.com/dmpierre/eth-private-market/blob/main/packages/circuits/circom/eth-address/ecdh-check/sellETHAddressECDH.circom"}> here</a>.
+
+<br />
+
+**Considerations**
+
+<br />
+
+It is interesting to consider that there exists a scheme for creating a market around one of the most illiquid asset of Ethereum. Private keys play the role of accessing accounts and initiating transactions and we may wonder what role such a setup can play.
+
+<br />
+
+Firstly, being able to trustlessly bid or ask for a private key could act as a deterring mechanism for delegating a stake to unknown parties. If a key were to leak from a staker with a delegated amount, anyone possessing it could sell it anonymously and trustlessly using this setup. Hence, this setup makes it possible to signal the leak of a private and valuable piece of information.
+
+<br />
+
+It also raises questions concerning governance protocols and voting mechanisms. Should votes from addresses whose private keys have been proposed for sale or sold count? Selling private keys on a marketplace might not be the most straightforward way of manipulating votes. Indeed, buying a private key does not guarantee in any way that the address a buyer would bid for would vote in a particular way. However, governance protocol could be vulnerable to a malicious entity selling or buying a bunch of addresses for a certain ETH amount, making a vote on a particular decision potentially non-effective.
+
+<br />
+
+Finally, parts of a private key marketplace setup might be relevant in the context of account abstraction. A wallet might adopt a rotating keypair scheme for signing its transactions. Being able to sell temporary access to a wallet using this setup might be particularly interesting for a use case such as account lending. We suppose that our construction is not definitive in any way. It rather points in a direction which could make liquid the illiquid asset that is an Ethereum wallet.
+
+<br />
+
+<SectionTitle text={'Selling EdDSA signatures'} size={'text-xl'} />
+
+<br />
+
+The ask flow for an EdDSA signature is not very different from the ask flow of an ECDSA keypair. Our implementation makes it possible for the buyer of a signature to ask for an arbitrary message - here the hash of a pubkey - to be signed by the public key committed by a seller. 
+
+<br />
+
+In our setup, we require the buyer to post the hash pre-image that the seller is required to sign. Although it incurs additional calldata, the seller knows what message is being signed.
+
+<br />
+
+<div className="flex pl-10 justify-start"> 
+    <ol className="list-decimal">
+        <li>
+        A seller commits to a public keypair that he claims to be able to sign messages with and posts a price.
+        </li>
+        <li>
+        Offchain, a buyer orders the signature by escrowing the corresponding price amount in ETH on the market and posts his public key point. He computes:
+            <ul className="pl-5 list-disc"> 
+                <li>an ECDH value (the "shared key") using the seller's public key point.</li>
+                <li>a commitment to the shared key.</li>
+                <li>a message to be signed. Here, it consists of the buyer's public key hash.</li>
+            </ul>
+        </li>
+        <li>
+        The seller posts on-chain a proof showing:
+            <ul className="pl-5 list-disc"> 
+                <li>assertion correctness: the signature has been correctly signed over the required hash.</li>
+                <li>encryption correctness: the signature has been encrypted correctly.</li>
+                <li>commitments correctness: the encryption key corresponds to the committed shared key. The signature's message corresponds to the buyer's on-chain committed hash.</li>
+            </ul>
+        </li>
+    </ol>
+</div>
+
+<br />
+
+In our setup, a seller might not be comfortable with signing arbitrary data. As a remedy, the buyer also posts the pre-image of the hash being signed. The seller now has to check that the hash being signed corresponds to the communicated pre-image and decide accordingly.
+
+<br />
+
+<div className="flex justify-center">
+    <Image alt="ask-eth" style={{maxWidth: "100%"}} src={askSignature} />
+</div>
+
+<br />
+
+We provide a corresponding circuit for this setup <a className="underline" rel={'noreferrer'} target={"_blank"} href="https://github.com/dmpierre/eth-private-market/blob/main/packages/circuits/circom/eddsa-signature/sellSigPublicMessageEdDSA.circom">here</a>.
+
+<br />
+
+**Considerations**
+
+<br />
+
+In our app, the buyer of a signature asks for the hash of its public key to be signed. This setup can be a convincing way to build a web3 native subscription platform. The signature that is bought on the market is a <a target={"_blank"} rel={'noreferrer'} href="https://github.com/proofcarryingdata/zupass"> PCD[^2] </a> showing that the buyer knows "a signature that has been signed by a particular service public keys". The buyer of the signature hence trustlessly gains access to a service of interest.
+
+<br />
+
+The buyer could also collect those signatures in a wallet, choosing which ones we wish to entirely or partly divulge to the service provider. As an example, we made a <LinkToTab href="https://github.com/proofcarryingdata/zupass/pull/154" text="PR" /> to add  <LinkToTab href='https://github.com/dmpierre/jubjub-signature-pcd' text="this PCD" /> to the <LinkToTab href="https://github.com/proofcarryingdata/zupass/tree/main" text="Zupass repo"/>, allowing for such signatures to be stored in the Zuzalu passport.
+
+<br />
+
+Let's go over a concrete example. The Bitcoin magazine proposes to subscribe to its content using this setup. Alice comes and escrows 0.01 ETH to access the newspaper for a year. The newspaper service fetches Alice's public key from what has been posted on-chain, signs a hash of it and posts on-chain the encrypted signature. Alice can decrypt the signature and can now add it to its PCD wallet. Upon login, Alice will be required to show that she knows a signature signed by the newspaper's keypair whose message is the hash of her public key. The latter remaining hidden, Alice trustlessly and privately gained login access. She can now read the Bitcoin magazine articles. 
+
+<br />
+
+<SectionTitle text={'Selling Groth16 proofs'} size={'text-xl'} />
+
+<br />
+
+We detail here how to trustlessly sell groth16 proofs. By leveraging recursion, we make it possible to privately sell a groth16 proof which a buyer can then use to access a corresponding proof-gated service. 
+
+<br />
+
+**Placing an ask for a groth16 proof**
+
+<br />
+
+The groth16 proof that we will place an ask for is the same kind of proof that is used on apps such as <a rel={"noreferrer"} target={"_blank"} href="https://twitter.com/heyanonxyz?lang=en">heyanon </a>.
+
+<br />
+
+To access those services, a user has to provide a proof that he knows a valid signature $s$ over a message $m$ emanating from a public key $pk_i$ stored in a tree $t$ with root $r$ and leafs $pk_0, ... , pk_i, ..., pk_n$. 
+
+<br />
+
+We first started to imagine that a heyanon user could directly sell the merkle path and the signature to an interested buyer. The problem is that it would break the anonymity of the seller. Both the merkle path and the signature would divulge to the buyer which public key in the merkle tree has sold his access. 
+
+<br />
+
+Rather, we will leverage recursivity. This makes us gain selective privacy, only divulging the inputs we want - the message and the group root. The seller will have to generate a proof showing that he knows a proof of a valid signature $s$ (private) over a message $m$ (public) and a merkle path $p$ (private) resolving to root $r$ (public).
+
+<br />
+
+Selling the proof itself will not break the anonymity of the seller while granting the same access level to the buyer. Here is how it would go:
+
+<br />
+
+<div className="flex pl-10 justify-start"> 
+    <ol className="list-decimal">
+        <li>
+        A seller commits to a group root $r$ to which he claims to have access to and a verification key hash $v$, associated with the verification key used in the proof-gated service.
+        </li>
+        <li>
+        Offchain, a buyer computes a shared key using the seller's public key point. He then orders a proof by escrowing the corresponding price amount in ETH on the market, posting his public key point and committing to a message he wishes to be posted within the group. 
+        </li>
+        <li>
+        The seller posts on-chain a proof showing:
+            <ul className="pl-5 list-disc"> 
+                <li>assertion correctness: the groth16 proof being sold is correct.</li>
+                <li>encryption correctness: the proof has been correctly encrypted.</li>
+                <li>commitments correctness: hashes of the encryption and verification keys are correct. The sold proof's group root and message hash correspond to the initially committed values.</li>
+            </ul>
+        </li>
+    </ol>
+</div>
+
+<br />
+
+<div className="flex justify-center">
+    <Image alt="ask-eth" style={{maxWidth: "100%"}} src={recursiveProof} />
+</div>
+
+<br />
+We provide a corresponding circuit for this setup <LinkToTab href="https://github.com/dmpierre/eth-private-market/blob/main/packages/circuits/circom/proof-sig-merkle/verifyAndEncryptSigMerkleProof.circom" text="here" />.
+
+<br />
+
+Note that in step 2., if the buyer encrypted the message he wants to be signed using the computed shared key, the buyer and seller would even obtain anonymity of the message being exchanged.
+
+<br />
+
+**Considerations**
+
+<br />
+
+When we started this project we first wondered how we could make it possible for users of a proof-gated service to have full ownership of the access they have.
+
+<br />
+
+Recently, <LinkToTab text="personae labs" href="https://personaelabs.org/" />  released <LinkToTab text="heyanoun" href="https://nouns.nymz.xyz/" />, a tool specifically designed for <LinkToTab text="nouns" href="https://nouns.wtf/" /> owners to anonymously ideate and discuss DAO props online. This is quite empowering for the nouns community. While public, the app's proof-gatedness ensures that only noun holders can participate, thereby acting as a filtering mechanism thereby enhancing discussion quality. 
+
+<br />
+
+Yet, it might not be too far-fetched to hypothesize that non-noun holders could also have interesting takes. What if a non-noun holder wanted to anonymously endorse a team regarding a prop? Or what if a prop had a corrupted initiator for which only a non-noun holder - that may wish to remain anonymous - could report malicious intent? Also, what about nouns holders themselves? Wouldn't it be interesting for them to leverage their access and make it possible to offer anons the ability to express themselves on their platform? This could add quite some value to their NFT holding.
+
+<br />
+
+This is what selling groth16 proofs enables. To give an example, I recently spotted an ask order to access a heyanon group regarding [...]. When my order got filled - by an anonymous group member -, I posted a message within the corresponding heyanon group, without even having my address included in this group! That's quite cool. The address that filled my order deemed my message interesting and had the opportunity to make something out of the access it was not using anymore. On my side, I had the privilege to post a cheeky message and make a contribution to a group I always wanted to feel a part of.
+
+<br />
+
+This is a very exciting achievement. We believe that it could open up another design space for proof-gated apps. 
+
+<br />
+
+First, because recursivity enables selective input disclosure, dapps makers could design different access policies according to which public signal is divulged. This would entail that different proofs could have different values, following the access type they offer. 
+
+<br />
+
+For instance, on heyanoun, the buyer of an "anon-access" proof could get the ability to post a message under a generic "nym". But there could also be the possibility to buy a slightly more expensive "impersonate" proof, making it possible to post a message under a "nym" that has accrued reputation over time, with more weight and influence within the community.
+
+<br />
+
+It also is exciting for NFT holders that have access to such apps. They can now trustlessly extract value out of their NFT, one that is different from the speculative dynamics that may surround their asset. Markets around thei utility could spin up dynamic ecosystems within NFT communities. Combined with a PCD holding wallet, a whole new set of apps and UX could be envisioned.
+
+<br />
+
+In the context of on-chain games, selling proofs rather than input to the proofs could be seen as a way to design "cheat codes". In <LinkToTab text="darkforest" href="https://zkga.me/" />, the <LinkToTab text="Nightmarket" href="https://nightmart.xyz/" /> setup was selling planet coordinates. Here, the proof-buyer can get other players to believe that he is exploring a specific area, spreading fake information around. He could also make other players or nft-redeeming services believe that he has won a round or placed in the leaderboard's top 5.
+
+<br />  
+
+<SectionTitle text={'Selling Ethereum transactions'} size={'text-xl'} />
+
+<br />
+
+There also exists a setup where what is being sold is the execution of a transaction on Ethereum. This could enable stealth transactions in an interesting way.
+
+<br />
+
+<div className="flex pl-10 justify-start"> 
+    <ol className="list-decimal">
+        <li>
+        Alice signals her intent to execute a transaction by placing an ask. The transaction will be executed provided some ETH amount is placed in escrow on the market.
+        </li>
+        <li>
+        Bob wants Alice to send some ETH to an address he holds the private key of. He escrows some ETH on the market for Alice. He computes:
+            <ul className="pl-5 list-disc"> 
+                <li>a shared key using Alice's public key point</li>
+                <li>a commitment to the shared key</li>
+                <li>the encrypted transaction data he wants Alice to execute. It consists of an address and an amount to be transferred.</li>
+                <li>a commitment to the transaction data. It could consist of $h(address, amount)$.</li>
+            </ul>
+        </li>
+        <li>
+        Alice decrypts the transaction data. She sends to the specified address the corresponding amount. She will get the escrow by providing a proof consisting of:
+            <ul className="pl-5 list-disc"> 
+                <li>Assertion correctness: using a merkle path resolving to a transaction trie root, Alice shows that there is a transaction receipt within the transaction receipt trie that satifies what Bob initially requested as transaction parameters. </li>
+                <li>Encryption correctness: Alice encrypted the transaction receipt using the shared key. </li>
+                <li>Commitment correctness: The hash of the executed transaction is equal to the commitment that has been posted by Bob. The transaction receipt has been encrypted using the shared key.</li>
+            </ul>
+        </li>
+    </ol>
+</div>
+
+<br />
+
+It is to be noted that Bob can escrow an amount of ETH different from what he asked Alice to execute. If he escrows a greater amount of ETH, he will in a way "tip" Alice for the executed transaction. He will also further decorrelate the amount being escrowed on the smart contract from the amount being transacted by Alice.
+
+<br />
+
+Such a setup could be possible by storing successive roots of the transaction receipt trie on the market's contract. 
+
+<br />
+
+However, being time and technically limited we do not provide an implementation here. Among other difficulties, we were not able to find ways to easily obtain merkle paths proving the inclusion of a transaction receipt within the transaction receipt trie - using an API similar to `eth_getProof` on geth. We would have had to implement both this API and an efficient way to generate proofs of transaction receipt inclusion - similar to what <LinkToTab href="https://www.axiom.xyz/" text="Axiom" /> did with Ethereum's state trie.
+
+<br />
+
+We were surprised since Ethereum's yellow paper explicitly mention that it might be interesting to generate zero-knowledge proofs pertaining to transaction receipts[^3]. Indeed, this setup would easily generalize from proving the execution od simple transactions to more complex contract interactions, aka *stealth interactions*.
+
+<br />
+
+<SectionTitle text={'Improving our setup'} size={'text-xl'} />
+
+<br />
+
+Our construction bears the risk of an actor spamming the market with ask orders that he knows he won't be able to fill. Three mechanisms could be used to prevent this: gate the ask with the provision of a proof that the buyer knows the data which resolves to the property, slashing rules where the asker can cancel his ask only by providing a corresponding proof and finally building a reputation protocol on top of the market.
+
+<br />
+
+We also detailed buyer-seller sequences requiring at most three different steps: an ask, an order and a fill. We should not however limit ourselves to this particular flow. One could imagine adding a step to enable buyers and sellers to privately communicate and/or commit to some piece additional piece of data. 
+
+<br />
+
+In addition to this, our setup works today solely with escrowing ether. However, one could allow for all kinds of assets such as NFTs or ERC-20s to be used as escrow. There could also be a collective escrow setup where buyers pool ETH together. For instance, an on-chain game DAO team could pool together their ETH to buy a pricey cheatcode giving them an unfair decisive strategic advantage.
+
+<br />
+
+We also did not tackle the topic of nullyfing proofs. However, proof-gated apps that enable such schemes may need to think of ways to avoid proofs from being double spent within their protocol.
+
+<br />
+
+<SectionTitle text={'Technicalities'} size={'text-xl'} />
+
+<br />
+
+A seller of a groth16 proof will have to incur a non-negligible cost from calldata. We did not work on implementing a compressed proof representation which may help us reduce such costs. This also points out that this setup will demand succinctness if it were to be adopted by an average everyday Ethereum user, with the encrypted data being posted on-chain. 
+
+<br />
+
+We have had to get beefy servers for generating zkeys and proofs[^4]. In general, the groth16 recursive proof cost is today prohibitive to be running on day-to-day machines. We would be excited to see teams working on making it possible to reach for the ability to recursively generate proofs on mobile devices, using proof schemes in the vein of Nova.
+
+<br />
+
+<SectionTitle text={'Conclusion'} size={'text-xl'} />
+
+<br />
+
+This work would not have been possible without all the help I received from the 0xPARC team. The Vietnam residency was fire.
+
+<br />
+
+Also, this work is heavily indebted with the seminal work on recursivity that was done by Nalin.
+
+<br />
+
+Finally, I got a lot of ideas thanks to Enrico, Lakshman and Vivek. I thank them for their patience and intelligence, while I was taking them through the weeds of this project.
+
+
+<br />
+
+[^1]: (1) See Nick Ulven's talk <a className="underline" target={"_blank"} rel={"noreferrer"} href="https://www.youtube.com/watch?v=Fgmkjw3W1qE"> here</a>.
+[^2]: (2) Here, PCD is meant in a broader, dev-deformed way - rather than its <a className="underline" target={"_blank"} rel={"noreferrer"} href="https://dspace.mit.edu/handle/1721.1/61151">academic</a> definition. 
+[^3]: (3) Berlin version, p.6
+[^4]: (4): Read: "I blew up my AWS bills lol"
+
+export default ({children}) => (
+    <div className="flex justify-center">
+        <div className="flex flex-col md:max-w-4xl max-w-xl">
+        <TopContainer>
+            <Title />
+            <div className="justify-start pt-10">
+                {children}
+            </div>
+        </TopContainer>
+        </div>
+    </div>
+
+)

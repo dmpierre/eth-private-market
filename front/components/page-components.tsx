@@ -26,6 +26,10 @@ export const PagePresentation: React.FC<{ text?: string }> = () => {
         <div className="text-lg text-center space-y-4">
             <p>Welcome!</p>
             <p>
+                Private markets leverage zero-knowledge and decentralized
+                ledgers to privately and trustlessly exchange data.
+            </p>
+            <p>
                 You might want to have a look at how this app works{' '}
                 <a
                     className="underline"
@@ -37,19 +41,13 @@ export const PagePresentation: React.FC<{ text?: string }> = () => {
                     here.
                 </a>{' '}
                 We also have a{' '}
-                <a
-                    className="underline"
-                    href=""
-                    target={'_blank'}
-                    rel={'noreferrer'}
-                >
+                <Link className='underline' href={'/whatisthis'}>
                     blog post
-                </a>
-                !
+                </Link>{' '}
+                detailing everything. 
             </p>
             <p>
-                Private markets leverage zero-knowledge and decentralized
-                ledgers to privately and trustlessly exchange data.
+            If you prefer to dive right into the code, you can find our repo <Link target='_blank' className='underline' href={'https://github.com/dmpierre/eth-private-market'}>here</Link>.
             </p>
         </div>
     );
@@ -72,4 +70,29 @@ export const PageTop: React.FC = () => {
             </div>
         </header>
     );
+};
+
+export const SectionTitle: React.FC<{ text: string, size: string }> = ({ text, size }) => {
+    return (
+        <div className={`${size} font-bold`}>
+            {text}
+        </div>
+    );
+}
+
+export const Paragraph: React.FC<{ text: string }> = ({ text }) => {
+    return <p className="p-2">{text}</p>;
+};
+
+interface LinkToTabProps {
+    text: string;
+    href: string;
+}
+
+export const LinkToTab: React.FC<LinkToTabProps> = ({ text, href }) => {
+    return (
+        <a className='underline' href={href} rel='noreferrer' target='_blank'>
+            {text}
+        </a>
+    )
 };

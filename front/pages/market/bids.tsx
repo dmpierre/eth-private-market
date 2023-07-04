@@ -55,28 +55,30 @@ export default function Bids() {
             <TopContainer>
                 <MarketPageTop></MarketPageTop>
                 <MarketNavBar active="bids" />
-                {
-                    chain?.id == CHAIN_ID ?
-                        <>
-                            {inspectingListing ? (
-                                <BidCard
-                                    manageView={false}
-                                    inspectingBid={inspectingListing}
-                                    setinspectingBid={setinspectingListing}
-                                />
-                            ) : isMounted ? (
-                                <ListingsTable
-                                    type="bids"
-                                    listingsElements={bidElements}
-                                    isMounted
-                                />
-                            ) : (
-                                <WaitForInfo loadText={loadText} description="Loading..." />
-                            )}
-                        </>
-                        :
-                        <ConnectWallet />
-                }
+                {chain?.id == CHAIN_ID ? (
+                    <>
+                        {inspectingListing ? (
+                            <BidCard
+                                manageView={false}
+                                inspectingBid={inspectingListing}
+                                setinspectingBid={setinspectingListing}
+                            />
+                        ) : isMounted ? (
+                            <ListingsTable
+                                type="bids"
+                                listingsElements={bidElements}
+                                isMounted
+                            />
+                        ) : (
+                            <WaitForInfo
+                                loadText={loadText}
+                                description="Loading..."
+                            />
+                        )}
+                    </>
+                ) : (
+                    <ConnectWallet />
+                )}
             </TopContainer>
         </>
     );

@@ -8,7 +8,6 @@ import {
 } from '@/components/market/market-components';
 import { OrderCard } from '@/components/market/order-card';
 import { TopContainer } from '@/components/page-components';
-import { WaitForInfo } from '@/components/wait-info';
 import { ConnectWallet } from '@/components/wallet';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { useListingEvent, useListings } from '@/hooks/useListings';

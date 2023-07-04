@@ -55,27 +55,29 @@ export default function Asks() {
             <TopContainer>
                 <MarketPageTop></MarketPageTop>
                 <MarketNavBar active="asks" />
-                {
-                    chain?.id == CHAIN_ID ?
-                        <>
-                            {inspectingListing ? (
-                                <AskCard
-                                    inspectingAsk={inspectingListing}
-                                    setinspectingAsk={setinspectingListing}
-                                />
-                            ) : isMounted ? (
-                                <ListingsTable
-                                    type="asks"
-                                    listingsElements={askElements}
-                                    isMounted
-                                />
-                            ) : (
-                                <WaitForInfo loadText={loadText} description="Loading..." />
-                            )}
-                        </>
-                        :
-                        <ConnectWallet />
-                }
+                {chain?.id == CHAIN_ID ? (
+                    <>
+                        {inspectingListing ? (
+                            <AskCard
+                                inspectingAsk={inspectingListing}
+                                setinspectingAsk={setinspectingListing}
+                            />
+                        ) : isMounted ? (
+                            <ListingsTable
+                                type="asks"
+                                listingsElements={askElements}
+                                isMounted
+                            />
+                        ) : (
+                            <WaitForInfo
+                                loadText={loadText}
+                                description="Loading..."
+                            />
+                        )}
+                    </>
+                ) : (
+                    <ConnectWallet />
+                )}
             </TopContainer>
         </>
     );

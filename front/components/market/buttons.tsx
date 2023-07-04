@@ -286,7 +286,7 @@ export const CancelButton: React.FC<CancelButtonProps> = ({ cancelData }) => {
             | 'cancelBid'
             | 'cancelAsk'
             | 'cancelOrder',
-        chainId: CHAIN_ID
+        chainId: CHAIN_ID,
     });
     let args: {};
     if (cancelData.cancelType == 'Bid') {

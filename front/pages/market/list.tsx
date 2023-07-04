@@ -71,8 +71,8 @@ export default function List() {
     const { address, isConnecting, isDisconnected } = useAccount();
 
     const { user, nonce, pubJubjub } = initUser();
-    
-    const { chain } = useNetwork()
+
+    const { chain } = useNetwork();
 
     /**
      * Bid is only available for ETHAddress
@@ -190,70 +190,75 @@ export default function List() {
                 <span className="ml-4">{rootFeedback}</span>
             </>
         );
-    
-    
-    const listButton = 
-        chain?.id == CHAIN_ID ? (
-        <a
-            href={`data:text/json;charset=utf-8,${encodeURIComponent(
-                JSON.stringify(exportMarketKey(user, marketAction))
-            )}`}
-            download={`${marketAction}-user-${Date.now()}.json`}
-        >
-            <button
-                disabled={
-                    !!priceFeedback ||
-                    isConnecting ||
-                    isDisconnected ||
-                    (objectType == 'Signature' && !!signatureFeedback) ||
-                    (objectType == 'ETHAddress' && !!addressFeedback) ||
-                    (objectType == 'SigMerkleGroth16Proof' &&
-                        (!!vkeyHashFeeback || !!rootFeedback))
-                }
-                onClick={() => {
-                    const value = BigInt(
-                        utils.parseEther(price.toString()).toString()
-                    );
 
-                    if (marketAction === 'askETHAddress') {
-                        write?.({
-                            args: [value, soldETHAddress, pubJubjub],
-                        });
-                    }
-                    if (marketAction === 'askSignature') {
-                        write?.({
-                            args: [value, soldSigningKeys, pubJubjub],
-                        });
-                    }
-                    if (marketAction === 'askSigMerkleGroth16Proof') {
-                        write?.({
-                            args: [value, soldVkeyHash, soldRoot, pubJubjub],
-                        });
-                    }
-                    if (marketAction === 'bidETHAddress') {
-                        if (isAddress(soldETHAddress)) {
-                            write?.({
-                                args: [soldETHAddress, nonce, pubJubjub],
-                                value: value,
-                            });
-                            setaddressFeedback(undefined);
-                        } else {
-                            setaddressFeedback(UserFeedback.InvalidETHAddress);
-                        }
-                    }
-                }}
-                style={{
-                    textTransform: 'capitalize',
-                }}
-                className="border-4 hover:bg-gray-100 py-1 px-4 rounded-md"
+    const listButton =
+        chain?.id == CHAIN_ID ? (
+            <a
+                href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                    JSON.stringify(exportMarketKey(user, marketAction))
+                )}`}
+                download={`${marketAction}-user-${Date.now()}.json`}
             >
-                {actionType}
-            </button>
-        </a>
-    ) : 
-        <ConnectWallet />
-    ;
-    
+                <button
+                    disabled={
+                        !!priceFeedback ||
+                        isConnecting ||
+                        isDisconnected ||
+                        (objectType == 'Signature' && !!signatureFeedback) ||
+                        (objectType == 'ETHAddress' && !!addressFeedback) ||
+                        (objectType == 'SigMerkleGroth16Proof' &&
+                            (!!vkeyHashFeeback || !!rootFeedback))
+                    }
+                    onClick={() => {
+                        const value = BigInt(
+                            utils.parseEther(price.toString()).toString()
+                        );
+
+                        if (marketAction === 'askETHAddress') {
+                            write?.({
+                                args: [value, soldETHAddress, pubJubjub],
+                            });
+                        }
+                        if (marketAction === 'askSignature') {
+                            write?.({
+                                args: [value, soldSigningKeys, pubJubjub],
+                            });
+                        }
+                        if (marketAction === 'askSigMerkleGroth16Proof') {
+                            write?.({
+                                args: [
+                                    value,
+                                    soldVkeyHash,
+                                    soldRoot,
+                                    pubJubjub,
+                                ],
+                            });
+                        }
+                        if (marketAction === 'bidETHAddress') {
+                            if (isAddress(soldETHAddress)) {
+                                write?.({
+                                    args: [soldETHAddress, nonce, pubJubjub],
+                                    value: value,
+                                });
+                                setaddressFeedback(undefined);
+                            } else {
+                                setaddressFeedback(
+                                    UserFeedback.InvalidETHAddress
+                                );
+                            }
+                        }
+                    }}
+                    style={{
+                        textTransform: 'capitalize',
+                    }}
+                    className="border-4 hover:bg-gray-100 py-1 px-4 rounded-md"
+                >
+                    {actionType}
+                </button>
+            </a>
+        ) : (
+            <ConnectWallet />
+        );
     return (
         <TopContainer>
             <MarketPageTop></MarketPageTop>

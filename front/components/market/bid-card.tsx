@@ -41,10 +41,10 @@ export const BidCard: React.FC<BidCardProps> = ({
         address: PRIVATE_MARKET_ADDRESS,
         abi: privateMarketABI,
         functionName: 'fillETHAddressBid',
-        chainId: CHAIN_ID
+        chainId: CHAIN_ID,
     });
     const [soldPriv, setsoldPriv] = useState<undefined | string>();
-    const { chain } = useNetwork()
+    const { chain } = useNetwork();
 
     const isFilled = inspectingBid.fill.from != ZERO_ADDRESS;
     const button =

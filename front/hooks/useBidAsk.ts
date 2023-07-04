@@ -7,7 +7,7 @@ export const useBidAsk = (marketAction: MarketActionType) => {
         address: PRIVATE_MARKET_ADDRESS,
         abi: privateMarketABI,
         functionName: marketAction,
-        chainId: CHAIN_ID
+        chainId: CHAIN_ID,
     });
 
     return {
