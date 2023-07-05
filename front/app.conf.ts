@@ -1,5 +1,5 @@
 export const PRIVATE_MARKET_ADDRESS =
-    '0x5115Ed8987Ae6D7148110cEBafba2B5Ec3098e66';
+    '0xa8335f89b3e761128ba721440ede0621f08c46e0';
 export const CHAIN_ID = 11155111;
 export const BUCKET_URL = 'https://d2ovde7k6pdj39.cloudfront.net/';
 export const SELL_ECDSA_ECDH_ZKEY = 'sellETHAddressECDH_1.zkey';
