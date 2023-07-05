@@ -212,8 +212,6 @@ export const AskCard: React.FC<AskCardProps> = ({
         </div>
     );
 
-    console.log(chain);
-
     return (
         <div className="flex flex-col space-y-2">
             {inspectingOrder ? (

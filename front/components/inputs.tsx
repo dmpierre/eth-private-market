@@ -287,7 +287,6 @@ export const InputGroth16Proof: React.FC<InputGroth16ProofProps> = ({
                             assert('pi_c' in proof);
                             setgroth16ProofValidity(undefined);
                             setgroth16Proof(proof);
-                            console.log(proof);
                         } catch (error) {
                             setgroth16ProofValidity('invalid proof format');
                             setgroth16Proof(undefined);
