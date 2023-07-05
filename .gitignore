@@ -74,6 +74,7 @@ packages/circuits/circom/proof-sig-merkle/bin
 __pycache__
 
 data/
+!how-to/data
 dist
 rsync.sh
 

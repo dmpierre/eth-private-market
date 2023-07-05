@@ -684,4 +684,4 @@ export const privateMarketABI = [
             { name: '', internalType: 'contract Verifier', type: 'address' },
         ],
     },
-] as const
+] as const;
