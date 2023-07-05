@@ -56,7 +56,7 @@ export default function Bids() {
                 <MarketPageTop></MarketPageTop>
                 <MarketNavBar active="bids" />
                 {chain?.id == CHAIN_ID ? (
-                    <div className='white-background'>
+                    <div className="white-background">
                         {inspectingListing ? (
                             <BidCard
                                 manageView={false}

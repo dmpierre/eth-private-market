@@ -116,63 +116,61 @@ export default function MyActivity() {
             <MarketNavBar active="activity" />
             {isMounted ? (
                 isConnected && chain?.id == CHAIN_ID ? (
-                    <div className='white-background'>
-                        {
-                            inspectingBid ? (
-                                <BidCard
-                                    manageView={true}
-                                    inspectingBid={inspectingBid}
-                                    setinspectingBid={setinspectingBid}
-                                />
-                            ) : inspectingAsk ? (
-                                <AskCard
-                                    inspectingAsk={inspectingAsk}
-                                    setinspectingAsk={setinspectingAsk}
-                                    manageView={true}
-                                />
-                            ) : inspectingOrder ? (
-                                <OrderCard
-                                    order={inspectingOrder}
-                                    setinspectingOrder={setinspectingOrder}
-                                    action="cancel"
-                                />
-                            ) : (
-                                <div className="space-y-4">
-                                    <div className="font-mono underline underline-offset-4">
-                                        My asks
-                                    </div>
-                                    <ListingsTable
-                                        type="asks"
-                                        listingsElements={askElements}
-                                        isMounted
-                                    />
-                                    <div className="font-mono underline underline-offset-4">
-                                        My orders
-                                    </div>
-                                    <ListingsTable
-                                        type="orders"
-                                        listingsElements={orderElements}
-                                        isMounted
-                                    />
-                                    <div className="font-mono underline underline-offset-4">
-                                        My bids
-                                    </div>
-                                    <ListingsTable
-                                        type="bids"
-                                        listingsElements={bidElements}
-                                        isMounted
-                                    />
-                                    <div className="font-mono underline underline-offset-4">
-                                        My fills
-                                    </div>
-                                    <ListingsTable
-                                        type="bids"
-                                        listingsElements={fillsElements}
-                                        isMounted
-                                    />
+                    <div className="white-background">
+                        {inspectingBid ? (
+                            <BidCard
+                                manageView={true}
+                                inspectingBid={inspectingBid}
+                                setinspectingBid={setinspectingBid}
+                            />
+                        ) : inspectingAsk ? (
+                            <AskCard
+                                inspectingAsk={inspectingAsk}
+                                setinspectingAsk={setinspectingAsk}
+                                manageView={true}
+                            />
+                        ) : inspectingOrder ? (
+                            <OrderCard
+                                order={inspectingOrder}
+                                setinspectingOrder={setinspectingOrder}
+                                action="cancel"
+                            />
+                        ) : (
+                            <div className="space-y-4">
+                                <div className="font-mono underline underline-offset-4">
+                                    My asks
                                 </div>
-                            )
-                        }
+                                <ListingsTable
+                                    type="asks"
+                                    listingsElements={askElements}
+                                    isMounted
+                                />
+                                <div className="font-mono underline underline-offset-4">
+                                    My orders
+                                </div>
+                                <ListingsTable
+                                    type="orders"
+                                    listingsElements={orderElements}
+                                    isMounted
+                                />
+                                <div className="font-mono underline underline-offset-4">
+                                    My bids
+                                </div>
+                                <ListingsTable
+                                    type="bids"
+                                    listingsElements={bidElements}
+                                    isMounted
+                                />
+                                <div className="font-mono underline underline-offset-4">
+                                    My fills
+                                </div>
+                                <ListingsTable
+                                    type="bids"
+                                    listingsElements={fillsElements}
+                                    isMounted
+                                />
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div className="flex flex-col items-center space-y-4">

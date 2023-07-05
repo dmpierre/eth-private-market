@@ -56,7 +56,7 @@ export default function Asks() {
                 <MarketPageTop></MarketPageTop>
                 <MarketNavBar active="asks" />
                 {chain?.id == CHAIN_ID ? (
-                    <div className='white-background'>
+                    <div className="white-background">
                         {inspectingListing ? (
                             <AskCard
                                 inspectingAsk={inspectingListing}
