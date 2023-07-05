@@ -23,7 +23,7 @@ export const TopContainer: React.FC<PropsWithChildren<{}>> = (props) => {
 
 export const PagePresentation: React.FC<{ text?: string }> = () => {
     return (
-        <div className="text-lg text-center space-y-4">
+        <div className="text-lg text-center space-y-4 white-background">
             <p>Welcome!</p>
             <p>
                 Private markets leverage zero-knowledge and decentralized
@@ -41,13 +41,21 @@ export const PagePresentation: React.FC<{ text?: string }> = () => {
                     here.
                 </a>{' '}
                 We also have a{' '}
-                <Link className='underline' href={'/whatisthis'}>
+                <Link className="underline" href={'/whatisthis'}>
                     blog post
                 </Link>{' '}
-                detailing everything. 
+                detailing everything.
             </p>
             <p>
-            If you prefer to dive right into the code, you can find our repo <Link target='_blank' className='underline' href={'https://github.com/dmpierre/eth-private-market'}>here</Link>.
+                If you prefer to dive right into the code, you can find our repo{' '}
+                <Link
+                    target="_blank"
+                    className="underline"
+                    href={'https://github.com/dmpierre/eth-private-market'}
+                >
+                    here
+                </Link>
+                .
             </p>
         </div>
     );
@@ -55,7 +63,7 @@ export const PagePresentation: React.FC<{ text?: string }> = () => {
 
 export const Title: React.FC = () => {
     return (
-        <div className="text-center font-mono text-4xl font-bold">
+        <div className="text-center font-mono text-4xl font-bold white-background">
             <Link href="/">Private Market</Link>
         </div>
     );
@@ -72,13 +80,12 @@ export const PageTop: React.FC = () => {
     );
 };
 
-export const SectionTitle: React.FC<{ text: string, size: string }> = ({ text, size }) => {
-    return (
-        <div className={`${size} font-bold`}>
-            {text}
-        </div>
-    );
-}
+export const SectionTitle: React.FC<{ text: string; size: string }> = ({
+    text,
+    size,
+}) => {
+    return <div className={`${size} font-bold`}>{text}</div>;
+};
 
 export const Paragraph: React.FC<{ text: string }> = ({ text }) => {
     return <p className="p-2">{text}</p>;
@@ -91,8 +98,8 @@ interface LinkToTabProps {
 
 export const LinkToTab: React.FC<LinkToTabProps> = ({ text, href }) => {
     return (
-        <a className='underline' href={href} rel='noreferrer' target='_blank'>
+        <a className="underline" href={href} rel="noreferrer" target="_blank">
             {text}
         </a>
-    )
+    );
 };

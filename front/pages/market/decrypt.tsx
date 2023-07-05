@@ -94,7 +94,7 @@ const DecryptOrder: React.FC = () => {
     }, [encryptedData, ecdh, nonce, objectType]);
 
     return (
-        <div className="space-y-4 border-4 rounded-md p-3 md:p-4">
+        <div className="space-y-4 white-background border-4 rounded-md p-3 md:p-4">
             <InputMarketOrder
                 setecdh={setecdh}
                 setobjectType={setobjectType}

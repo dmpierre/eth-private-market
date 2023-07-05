@@ -10,13 +10,19 @@ This is a repo demonstrating how to leverage zk-snarks and ethereum for trustles
 2. eddsa signatures
 3. groth16 proofs
 
-An extensive post can be found [here]().
+You can read our post [here](https://www.privatemarket.dev/whatisthis). Or see [Private Market](https://www.privatemarket.dev) in action. We deployed the contracts to the Sepolia testnet.
 
 ### Install
 
-Setup repo:
+You can also run Private Market locally!
+
+To setup the repo:
 
 1. Clone: `git clone --recurse-submodules https://github.com/dmpierre/eth-private-market.git`
 2. `yarn install`
 
+Then:
 
+```bash
+$ cd front && yarn dev
+```

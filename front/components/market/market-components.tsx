@@ -14,7 +14,7 @@ export const MarketNavBar: React.FC<MarketNavBarProps> = ({ active }) => {
         active == 'decrypt' ? 'underline' : 'hover:underline';
 
     return (
-        <div className="flex font-mono md:text-lg justify-center py-5 space-x-4 md:space-x-16">
+        <div className="flex white-background font-mono md:text-lg justify-center py-5 space-x-4 md:space-x-16">
             <div>
                 <Link href="/market/bids">
                     <span className={`${bidsUnderline} underline-offset-2`}>

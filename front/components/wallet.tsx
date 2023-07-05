@@ -36,7 +36,7 @@ export const ConnectWallet: React.FC = () => {
     return (
         <button
             disabled={isConnected && data?.chain.id == CHAIN_ID}
-            className="hover:bg-gray-100 border-4 py-1 px-4 rounded-md"
+            className="hover:bg-gray-100 border-4 white-background py-1 px-4 rounded-md"
             onClick={clickFn}
         >
             {buttonText}
