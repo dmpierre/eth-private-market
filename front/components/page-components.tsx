@@ -33,7 +33,7 @@ export const PagePresentation: React.FC<{ text?: string }> = () => {
                 You might want to have a look at how this app works{' '}
                 <a
                     className="underline"
-                    href=""
+                    href="https://github.com/dmpierre/eth-private-market/tree/main/how-to"
                     target={'_blank'}
                     rel={'noreferrer'}
                 >
