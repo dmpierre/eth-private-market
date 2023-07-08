@@ -20,10 +20,10 @@ $ yarn ts-node scripts/getVkeyHash.ts ../relative/path/to/proof.json ../relative
 
 #### Preparing for filling a groth16 proof order
 
-1. If an order has been passed, download it. the order for the marketplace
+1. If an order has been passed, download it.
 2. Make sure you have the following available:
     - path to your initial ask file - named as `askSigMerkleGroth16Proof-user-1234567890.json`.
-    - path to the order for which you will generate a proof - file named as `orderId-i-askId-j.json`. 
+    - path to the order that you just downloaded, for which you will generate a proof - file named as `orderId-i-askId-j.json`. 
     - path to a private key whose corresponding public key is in the tree of addresses. This file should consist of a single line with the private key in hex format, not prefixed with `0x`.
     - path to the merkle tree of addresses. This file is a simple json file with the following format:
     ```json
@@ -45,7 +45,9 @@ Those paths are provided relatively to this folder.
 $ yarn run ts-node scripts/sigMerkleProof.ts ./relative/path/ask.json ../relative/path/order.json ./relative/path/privateKey ../relative/path/merkleTree.json ./relative/path/to/wasm ../relative/path/to/zkey ./relative/path/to/vkey.json
 ```
 
-The proof, public signals and inputs files are available in the `scripts/out/` folder. They are all prefixed with `ask-{askId}-order-{orderId}`.  The inputs file is here if we want to check what went within our proof. Since we will sell this proof, we will now only need the proof and public signals files.
+The proof, public signals and inputs files are available in the `scripts/out/` folder. They are all prefixed with `ask-{askId}-order-{orderId}`.  The inputs file is here if we want to check what went within our proof. 
+
+Since we will sell the proof and not the inputs that went into it, we will now only need the proof that you just generated and its corresponding public signals file.
 
 #### Preparing inputs to the recursive proof
 
@@ -70,7 +72,7 @@ The `scripts/output.json` file will be what we will input to our circuit for rec
 
 #### Generating a recursive proof
 
-1. Setup an need access to a machine with generous hardware specs. The following steps have been tested on an AWS `r5.4xlarge` ubuntu machine.
+1. Setup an need access to a machine with generous hardware specs. **The following steps have been tested on an AWS `r5.4xlarge` ubuntu machine.** Try to get the same specs.
 2. After having git cloned the repo, run the `sh/setup.sh` script. 
 3. Download and/or upload to your machine the following files:
     - The `zkey` (!19Gb!): `wget "https://drive.google.com/uc?export=download&id=1Ur_gI0Xz37oj4VNrXm9WIS4P5q5zdKKB&export=download&confirm=yes" -O zkey_1.zkey`. If you get the `Too many requests` error download it directly from [here](https://drive.google.com/file/d/1Ur_gI0Xz37oj4VNrXm9WIS4P5q5zdKKB/view?usp=drive_link).
@@ -79,7 +81,11 @@ The `scripts/output.json` file will be what we will input to our circuit for rec
 4. Run `make` within the `verifyAndEncryptsigMerkle_cpp` folder
 5. Generate the recursive proof by running: `prove.sh ./relative/path/to/first-proof-prepared-inputs.json ./relative/path/to/cpp/verifyAndEncryptSigMerkleProof ./relative/path/to/verifyAndEncryptSigMerkleProof.vkey`. You should see a bunch of logging. This is relative to generating the witness. Generating the proof can take a bit of time.
 
-That's it! Get the `proof.json` and `public.json` files which were generated during the last step. Get your initial `askSigMerkleGroth16Proof-user-1234567890.json` file. Go to the marketplace and fill the order with each of those files. 
+That's it! Get the `proof.json` and `public.json` files which were generated during the last step. The `proof.json` file is the recursive proof. 
+
+The `public.json` file contains a bunch of public signals, among which the encrypted proof that you initially generated. 
+
+Get your initial `askSigMerkleGroth16Proof-user-1234567890.json` file. Go to the marketplace and fill the order with each of those files. 
 
 #### Getting the public signals from a decrypted a groth16 proof
 
