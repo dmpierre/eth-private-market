@@ -140,9 +140,9 @@ Let's go over how those three different proofs work together. Pretend that Alice
                     encryption proof. This encrypted data is posted on chain.
                 </li>
                 <li>
-                    Showing that she used the same shared key as Bob
-                    and that the odd number being sold is the same as the one
-                    committed earlier - the commitment proof.
+                    Showing that she used the same shared key as Bob and that
+                    the odd number being sold is the same as the one committed
+                    earlier - the commitment proof.
                 </li>
             </ul>
         </li>
@@ -167,8 +167,7 @@ to us to explore this avenue.
 **Placing an ask on an ethereum address**
 
 <br />
-Placing an ask on an Ethereum address is not very different from placing an ask on
-any other kind of asset.{' '}
+Let's go over what an ask process would look like for the private key of an Ethereum address.{' '}
 
 <br />
 
@@ -182,10 +181,7 @@ any other kind of asset.{' '}
             A buyer escrows the corresponding price amount in ETH on a smart
             contract and posts his public key . He computes:
             <ul className="pl-5 list-disc">
-                <li>
-                    an ECDH value using the seller's public
-                    key point.
-                </li>
+                <li>an ECDH value using the seller's public key point.</li>
                 <li>a commmitment to the shared key.</li>
             </ul>
         </li>
@@ -197,8 +193,7 @@ any other kind of asset.{' '}
                     provided private key.
                 </li>
                 <li>
-                    Encryption correctness: the private key has been correctly
-                    poseidon encrypted
+                    Encryption correctness: the private key has been correctly encrypted.
                 </li>
                 <li>
                     Commitments correctness: the encryption key corresponds to
@@ -247,8 +242,8 @@ Placing a bid differs from placing an ask since the buyer expresses his intent t
             A seller posts on-chain a proof:
             <ul className="pl-5 list-disc">
                 <li>
-                    Assertion correctness: the address can be derived
-                    from the provided private key.{' '}
+                    Assertion correctness: the address can be derived from the
+                    provided private key.{' '}
                 </li>
                 <li>
                     Encryption correctness: the private key has been correctly
@@ -256,13 +251,13 @@ Placing a bid differs from placing an ask since the buyer expresses his intent t
                 </li>
                 <li>
                     Commitments correctness: the seller used the buyer's
-                    committed public key. The derived address corresponds
-                    to the address being bid.{' '}
+                    committed public key. The derived address corresponds to the
+                    address being bid.{' '}
                 </li>
                 <li>
                     Key exchange correctness: the seller's communicated public
-                    key corresponds to the one that has been used to
-                    compute the shared encryption key.{' '}
+                    key corresponds to the one that has been used to compute the
+                    shared encryption key.{' '}
                 </li>
             </ul>
         </li>
@@ -301,11 +296,11 @@ Firstly, being able to trustlessly bid or ask for a private key could act as a d
 
 <br />
 
-It also raises questions concerning governance protocols and voting mechanisms. Should votes from addresses whose private keys have been proposed for sale or sold count? Selling private keys on a marketplace might not be the most straightforward way of manipulating votes. Indeed, buying a private key does not guarantee in any way that the address a buyer would bid for would vote in a particular way. However, governance protocol could be vulnerable to a malicious entity selling or buying a bunch of addresses for a certain ETH amount, making a vote on a particular decision potentially non-effective.
+It also raises questions concerning governance protocols and voting mechanisms. Should votes from addresses whose private keys have been proposed for sale or sold count? Selling private keys on a marketplace might not be the most straightforward way of manipulating votes. Indeed, buying a private key does not guarantee in any way that the address a buyer would bid for would vote in a particular way. However, governance protocol could be vulnerable to a malicious entity selling or buying a bunch of addresses for a certain ETH amount, making a vote on a particular decision potentially non-effective. Once private keys of participating addresses have been broadcasted on a private market, should those still have their voice in governance decisions?
 
 <br />
 
-Finally, parts of a private key marketplace setup might be relevant in the context of account abstraction. A wallet might adopt a rotating keypair scheme for signing its transactions. Being able to sell a temporary access to a wallet using this setup might be particularly interesting for a use case such as account lending. 
+Finally, parts of a private key marketplace setup might be relevant in the context of account abstraction. A wallet might adopt a rotating keypair scheme for signing its transactions. Being able to sell a temporary access to a wallet using this setup might be particularly interesting for a use case such as account lending.
 
 <br />
 
@@ -317,7 +312,7 @@ Our construction is not definitive in any way. It rather points in a direction w
 
 <br />
 
-The ask flow for an EdDSA signature is not very different from the ask flow of an ECDSA keypair. Our implementation makes it possible for the buyer of a signature to ask for an arbitrary public message - here the hash of a pubkey - to be signed by the public key committed by a seller.
+The ask flow for an EdDSA signature is not very different from the ask flow of an ECDSA keypair. Our implementation makes it possible for the buyer of a signature to ask for an arbitrary public message to be signed by the public key committed by a seller.
 
 <br />
 
@@ -388,7 +383,7 @@ We provide a corresponding circuit for this setup <LinkToTab  href="https://gith
 
 <br />
 
-In our app, the buyer of a signature asks for the hash of its public key to be signed. This setup can be a convincing way to build a web3 native subscription platform. The signature that is bought on the market is a <a target={"\_blank"} rel={'noreferrer'} href="https://github.com/proofcarryingdata/zupass"> PCD[^2] </a> showing that the buyer knows "a signature that has been signed by a particular service public keys". The buyer of the signature hence trustlessly gains access to a service of interest.
+In our app, the buyer of a signature asks for the hash of its public key to be signed. Leveraging some public key registry, this setup can be a convincing way to build a web3 native subscription platform. The signature that is bought on the market is a <a target={"\_blank"} rel={'noreferrer'} href="https://github.com/proofcarryingdata/zupass"> PCD[^2] </a> showing that the buyer knows "a signature that has been signed by the public key of a particular service". The buyer of the signature hence trustlessly gains access to a service of interest.
 
 <br />
 
@@ -396,9 +391,10 @@ The buyer could also collect those signatures in a wallet, choosing which ones w
 
 <br />
 
-Let's go over a concrete example. The Bitcoin magazine proposes to subscribe to its content using this setup. Alice comes and escrows 0.01 ETH to access the newspaper for a year. The newspaper service fetches Alice's public key from what has been posted on-chain, signs a hash of it and posts on-chain the encrypted signature. Alice can decrypt the signature and can now add it to its PCD wallet. Upon login, Alice will be required to show that she knows a signature signed by the newspaper's keypair whose message is the hash of her public key. The latter remaining hidden, Alice trustlessly and privately gained login access. She can now read the Bitcoin magazine articles.
+Let's go over a concrete example. The Bitcoin magazine proposes to subscribe to its content using this setup. Alice comes and escrows 0.01 ETH to access the newspaper for a year. The newspaper service fetches Alice's public key from what has been posted on-chain, signs a hash of it and posts on-chain the encrypted signature. Alice can decrypt the signature and can now add it to its PCD wallet. Upon login, Alice will be required to show that (1) she knows a signature signed by the newspaper's keypair whose message is the hash of her public key and (2) she knows the private key of this public key. The public key will remain hidden, Alice will only have to provide the proof. Thus, she will trustlessly and privately gain login and read access to the Bitcoin magazine articles.
 
 <br />
+
 
 <SectionTitle text={'Selling Groth16 proofs'} size={'text-xl'} />
 
@@ -441,9 +437,9 @@ Selling the proof itself will not break the anonymity of the seller while granti
         </li>
         <li>
             Offchain, a buyer computes a shared key using the seller's public
-            key. He then orders a proof by escrowing the corresponding
-            price amount in ETH on the market, posting his public key and
-            committing to a message he wishes to be posted within the group.
+            key. He then orders a proof by escrowing the corresponding price
+            amount in ETH on the market, posting his public key and committing
+            to a message he wishes to be posted within the group.
         </li>
         <li>
             The seller posts on-chain a proof showing:
@@ -470,13 +466,18 @@ Selling the proof itself will not break the anonymity of the seller while granti
 <br />
 
 <div className="flex justify-center">
-    <Image alt="ask-sig-merkle" style={{ maxWidth: '100%' }} src={recursiveProof} />
+    <Image
+        alt="ask-sig-merkle"
+        style={{ maxWidth: '100%' }}
+        src={recursiveProof}
+    />
 </div>
 
 <br />
 We provide a corresponding circuit for this setup <LinkToTab
     href="https://github.com/dmpierre/eth-private-market/blob/main/packages/circuits/circom/proof-sig-merkle/verifyAndEncryptSigMerkleProof.circom"
-    text="here"/> .
+    text="here"
+/> .
 
 <br />
 
@@ -500,7 +501,7 @@ Yet, it might not be too far-fetched to hypothesize that non-noun holders could 
 
 <br />
 
-This is what selling groth16 proofs enables. To give an example, I recently spotted an ask order to access a heyanon group regarding [...]. When my order got filled - by an anonymous group member -, I posted a message within the corresponding heyanon group, without even having my address included in this group! That's quite cool. The address that filled my order deemed my message interesting and had the opportunity to make something out of the access it was not using anymore. On my side, I had the privilege to post a cheeky message and make a contribution to a group I always wanted to feel a part of.
+This is what selling groth16 proofs enables. To give an example, I recently spotted an ask order to access a heyanon group. When my order got filled - by an anonymous group member -, I posted a message within the corresponding heyanon group, without even having my address included in this group! That's quite cool. The address that filled my order deemed my message interesting and had the opportunity to make something out of the access it was not using anymore. On my side, I had the privilege to post a cheeky message and make a contribution to a group I always wanted to feel a part of.
 
 <br />
 
@@ -576,9 +577,10 @@ There also exists a setup where what is being sold is the execution of a transac
                     receipt using the shared key.{' '}
                 </li>
                 <li>
-                    Commitment correctness: The hash of the executed transaction parameters
-                    is equal to the commitment that has been posted by Bob. The
-                    transaction receipt has been encrypted using the correct shared key.
+                    Commitment correctness: The hash of the executed transaction
+                    parameters is equal to the commitment that has been posted
+                    by Bob. The transaction receipt has been encrypted using the
+                    correct shared key.
                 </li>
             </ul>
         </li>
