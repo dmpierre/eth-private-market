@@ -167,7 +167,8 @@ to us to explore this avenue.
 **Placing an ask on an ethereum address**
 
 <br />
-Let's go over what an ask process would look like for the private key of an Ethereum address.{' '}
+Let's go over what an ask process would look like for the private key of an Ethereum
+address.{' '}
 
 <br />
 
@@ -193,7 +194,8 @@ Let's go over what an ask process would look like for the private key of an Ethe
                     provided private key.
                 </li>
                 <li>
-                    Encryption correctness: the private key has been correctly encrypted.
+                    Encryption correctness: the private key has been correctly
+                    encrypted.
                 </li>
                 <li>
                     Commitments correctness: the encryption key corresponds to
@@ -394,7 +396,6 @@ The buyer could also collect those signatures in a wallet, choosing which ones w
 Let's go over a concrete example. The Bitcoin magazine proposes to subscribe to its content using this setup. Alice comes and escrows 0.01 ETH to access the newspaper for a year. The newspaper service fetches Alice's public key from what has been posted on-chain, signs a hash of it and posts on-chain the encrypted signature. Alice can decrypt the signature and can now add it to its PCD wallet. Upon login, Alice will be required to show that (1) she knows a signature signed by the newspaper's keypair whose message is the hash of her public key and (2) she knows the private key of this public key. The public key will remain hidden, Alice will only have to provide the proof. Thus, she will trustlessly and privately gain login and read access to the Bitcoin magazine articles.
 
 <br />
-
 
 <SectionTitle text={'Selling Groth16 proofs'} size={'text-xl'} />
 
